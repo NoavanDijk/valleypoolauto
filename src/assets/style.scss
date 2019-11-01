@@ -1,0 +1,46 @@
+$primary: #ff0028;
+$font-family-primary: "Open Sans";
+$title-family: "Merriweather";
+$size-5: 1.1rem;
+
+@import "~bulma/bulma";
+
+#app {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  // background-image: url('images/valleyachtergrond.jpg');
+  background-size: cover;
+  background-color: white;
+}
+
+.navbar {
+  width: 100%;
+}
+
+.addreservationbutton{
+  border-radius: 9999px;
+  height: 3.5em;
+  width: 3.5em;
+}
+
+.content{
+  display: flex;
+  flex-direction: column;
+}
+
+.sortbydate{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.addreservation{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reservationstable{
+  display: flex;
+  margin-top: 1em;
+}
