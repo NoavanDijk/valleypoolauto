@@ -28,16 +28,16 @@
     </nav>
 
     <div class="content">
-      <div>
-      <div class="sortbydate">
-        <input type="date">
-      </div>
+      <div class="headerdatebutton">
+        <div class="sortbydate">
+          <input class="input headerdate" type="date">
+        </div>
 
-      <div class="addreservation">
-        <button class="button addreservationbutton is-primary" type="button" name="button" v-on:click="onClickAddReservationButton">
-          <i class="fas fa-plus"></i>
-        </button>
-      </div>
+        <div class="addreservation">
+          <button class="button addreservationbutton is-primary" type="button" name="button" v-on:click="onClickMakeReservationButton">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
       </div>
 
       <div class="reservationstable">
@@ -50,60 +50,61 @@
               <th>Startdate</th>
               <th>Enddate</th>
               <th>Status</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in items">
-              <td>{{item.startTime}}</td>
-              <td>{{item.endTime}}</td>
+            <tr v-for="(item, index) in items" v-on:click="changeColor(index)" v-bind:class="{'active': activeIndex === index}">
+              <td v-html="item.startTime"></td>
+              <td v-html="item.endTime"></td>
               <td>Name</th>
-              <td>{{formatDateToString(item.startdate)}}</td>
-              <td>{{formatDateToString(item.enddate)}}</td>
-              <td>{{item.status}}</td>
+              <td v-html="formatDateToString(item.startdate)"></td>
+              <td v-html="formatDateToString(item.enddate)"></td>
+              <td v-html="item.status"></td>
+              <td><i class="fas fa-edit"></i></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <form action="" v-visible="makeReservationForm">
-        <input type="time" v-model="startTime">
-        <input type="time" v-model="endTime">
-        <input type="date" v-model="startdate">
-        <input type="date" v-model="enddate">
-        <button class="button is-primary" type="button" name="button" :disabled="reservatebuttonIsDisabled" v-on:click="onClickMakeReservationButton">Reserveer</button>
-      </form>
+      <div class="formmakereservation" v-if="items[activeIndex]">
+        <form action="" v-visible="makeReservationForm">
+          <input class="input" type="time" v-model="startTime">
+          <input class="input" type="time" v-model="endTime">
+          <input class="input" type="date" v-model="startdate">
+          <input class="input" type="date" v-model="enddate">
+          <button class="button is-primary" type="button" name="button" :disabled="reservatebuttonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserveer</button>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-/* eslint-disable */
 import moment from 'moment'
 export default {
   name: 'app',
   data() {
-    // var m = new Date();
-    // var dateString = m.getUTCDate() +"-"+ (m.getUTCMonth()+1) +"-"+ m.getUTCFullYear();
-
     return {
-    makeReservationForm: false,
-    allReservations: true,
+      activeIndex: -1,
+      makeReservationForm: true,
+      allReservations: true,
 
-    // Editable Reserve Object
-    startdate: '',
-    enddate: '',
-    startTime: '',
-    endTime: '',
-    id: 1,
-    status: 'In progress',
+      // Editable Reserve Object
+      startdate: '',
+      enddate: '',
+      startTime: '',
+      endTime: '',
+      id: 1,
+      status: 'In progress',
 
-    kmstart: 0,
-    kmend: 0,
-    zipcodedeparture: '',
-    zipcodedestination: '',
-    description: '',
+      kmstart: 0,
+      kmend: 0,
+      zipcodedeparture: '',
+      zipcodedestination: '',
+      description: '',
 
-    items: [],
+      items: [],
     }
   },
 
@@ -142,7 +143,30 @@ export default {
     },
   },
 
+  watch: {
+    activeIndex(){
+  // if activeindex is valid, do the below
+      if(this.items[this.activeIndex]){
+        this.startTime = this.items[this.activeIndex].startTime;
+        this.endTime = this.items[this.activeIndex].endTime;
+        this.startdate = this.items[this.activeIndex].startdate;
+        this.enddate = this.items[this.activeIndex].enddate;
+
+        this.kmstart = this.items[this.activeIndex].kmstart;
+        this.kmend = this.items[this.activeIndex].kmend;
+        this.zipcodedeparture = this.items[this.activeIndex].zipcodedeparture;
+        this.zipcodedestination = this.items[this.activeIndex].zipcodedestination;
+        this.description = this.items[this.activeIndex].description;
+      }
+    }
+  },
+
   methods: {
+    changeColor: function(index){
+      this.activeIndex = index;
+      return;
+    },
+
     formatDateToString: function(date){
       var d = new Date(date);
       var retVal;
@@ -157,19 +181,13 @@ export default {
       return retVal;
     },
 
-    onClickAddReservationButton: function(event){
-      this.makeReservationForm = true;
-      this.allReservations = false;
-      return;
-    },
-
     onClickMakeReservationButton: function(event){
       this.items.push ({
         // id: 0
-        startTime: this.startTime,
-        endTime: this.endTime,
-        startdate: this.startdate,
-        enddate: this.enddate,
+        startTime: "",
+        endTime: "",
+        startdate: "",
+        enddate: "",
         kmend: 0,
         kmstart: 0,
         zipcodedeparture: '',
@@ -178,12 +196,15 @@ export default {
         status: this.status
       });
 
-      this.startTime = '',
-      this.endTime = '',
-      this.startdate = '',
-      this.enddate = '',
-      this.makeReservationForm = false;
-      this.allReservations = true;
+      this.changeColor(this.items.length -1);
+      this.makeReservationForm = true;
+    },
+
+    onClickConfirmEditReservation: function(event){
+      this.items[this.activeIndex].startTime = this.startTime;
+      this.items[this.activeIndex].endTime = this.endTime;
+      this.items[this.activeIndex].startdate = this.startdate;
+      this.items[this.activeIndex].enddate = this.enddate;
     }
   }
 }

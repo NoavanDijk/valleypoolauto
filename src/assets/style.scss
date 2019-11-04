@@ -28,19 +28,49 @@ $size-5: 1.1rem;
 .content{
   display: flex;
   flex-direction: column;
+  min-width: 669px;
+  max-width: 669px;
+}
+
+.headerdatebutton{
+  display: inherit;
 }
 
 .sortbydate{
   display: flex;
   justify-content: flex-start;
+  width: 100%;
 }
 
 .addreservation{
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 }
 
 .reservationstable{
   display: flex;
-  margin-top: 1em;
+  margin-top: 0.5em;
+}
+
+.fa-edit, .fa-plus{
+  font-size: 20px;
+}
+
+.input {
+  margin: 1em;
+  width: 22.5%;
+}
+
+.headerdate{
+  width: 45%;
+  margin: 0;
+}
+
+.active {
+  box-shadow: 0 0 2px;
+}
+
+.formmakereservation{
+  margin: 1em;
 }
