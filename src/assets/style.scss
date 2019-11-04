@@ -20,9 +20,6 @@ $size-5: 1.1rem;
 }
 
 .addreservationbutton{
-  border-radius: 9999px;
-  height: 3.5em;
-  width: 3.5em;
 }
 
 .content{
@@ -55,6 +52,7 @@ $size-5: 1.1rem;
 
 .fa-edit, .fa-plus{
   font-size: 20px;
+  cursor: pointer;
 }
 
 .input {
@@ -73,4 +71,8 @@ $size-5: 1.1rem;
 
 .formmakereservation{
   margin: 1em;
+}
+
+.editbutton{
+  border: 0px;
 }

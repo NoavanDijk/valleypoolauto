@@ -17,10 +17,10 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <a class="navbar-item">
-              Auto reserveren
+              Reserve the car
             </a>
             <a class="navbar-item">
-              Mijn reserveringen
+              My reservations
             </a>
           </div>
         </div>
@@ -35,7 +35,7 @@
 
         <div class="addreservation">
           <button class="button addreservationbutton is-primary" type="button" name="button" v-on:click="onClickMakeReservationButton">
-            <i class="fas fa-plus"></i>
+            Reserve here
           </button>
         </div>
       </div>
@@ -54,14 +54,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in items" v-on:click="changeColor(index)" v-bind:class="{'active': activeIndex === index}">
+            <tr v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]">
               <td v-html="item.startTime"></td>
               <td v-html="item.endTime"></td>
               <td>Name</th>
               <td v-html="formatDateToString(item.startdate)"></td>
               <td v-html="formatDateToString(item.enddate)"></td>
               <td v-html="item.status"></td>
-              <td><i class="fas fa-edit"></i></td>
+              <td class="editbuttontd">
+                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservation(index)"><i class="fas fa-edit"></i></button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -73,10 +75,22 @@
           <input class="input" type="time" v-model="endTime">
           <input class="input" type="date" v-model="startdate">
           <input class="input" type="date" v-model="enddate">
-          <button class="button is-primary" type="button" name="button" :disabled="reservatebuttonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserveer</button>
+          <button class="button is-primary" type="button" name="button" :disabled="reservatebuttonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
+        </form>
+      </div>
+
+      <div class="formmakereservation" v-if="items[activeIndex]">
+        <form action="" v-visible="addInformationToReservation">
+          <input class="input" type="number" v-model="kmstart">
+          <input class="input" type="number" v-model="kmend">
+          <input class="input" type="text" v-model="zipcodedeparture">
+          <input class="input" type="text" v-model="zipcodedestination">
+          <button class="button is-primary" type="button" name="button" :disabled="saveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Save</button>
         </form>
       </div>
     </div>
+
+    <button class="button is-primary" type="button" name="button" v-on:click="onClickAcceptReservation">Accept</button>
   </div>
 </template>
 
@@ -87,8 +101,11 @@ export default {
   data() {
     return {
       activeIndex: -1,
-      makeReservationForm: true,
+
+      makeReservationForm: [],
       allReservations: true,
+
+      approvedOrNot: [],
 
       // Editable Reserve Object
       startdate: '',
@@ -141,6 +158,12 @@ export default {
         && endDateisAfterBeginDate
         || datesAreEqualAndBeginTimeIsBeforeEndTime);
     },
+
+    saveButtonIsDisabled(){
+      const kmEndIsBiggerThanKmstart = parseInt(this.kmend) >= parseInt(this.kmstart);
+      const zeroKilometers = this.kmend != 0 && this.kmstart != 0;
+      return (kmEndIsBiggerThanKmstart && zeroKilometers);
+    }
   },
 
   watch: {
@@ -162,8 +185,12 @@ export default {
   },
 
   methods: {
-    changeColor: function(index){
+    onClickFillInInformation: function(index){
       this.activeIndex = index;
+    },
+
+    onClickEditReservation: function(index){
+      this.activeIndex = index
       return;
     },
 
@@ -193,11 +220,14 @@ export default {
         zipcodedeparture: '',
         zipcodedestination: '',
         description: '',
-        status: this.status
+        status: this.status,
       });
 
-      this.changeColor(this.items.length -1);
-      this.makeReservationForm = true;
+      this.approvedOrNot.push(false);
+      console.log(this.approvedOrNot);
+      this.makeReservationForm.push(true);
+
+      this.onClickEditReservation(this.items.length -1);
     },
 
     onClickConfirmEditReservation: function(event){
@@ -205,6 +235,15 @@ export default {
       this.items[this.activeIndex].endTime = this.endTime;
       this.items[this.activeIndex].startdate = this.startdate;
       this.items[this.activeIndex].enddate = this.enddate;
+    },
+
+    onClickAcceptReservation: function(event){
+      this.items[this.activeIndex].status = 'Approved';
+
+      this.approvedOrNot.splice(this.activeIndex, 1, true);
+      console.log(this.approvedOrNot  );
+      this.makeReservationForm.splice(this.activeIndex, 1, false);
+      this.onClickEditReservation(this.items.length -1);
     }
   }
 }
