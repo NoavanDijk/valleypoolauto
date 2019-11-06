@@ -61,7 +61,7 @@
               <td v-html="formatDateToString(item.startdate)"></td>
               <td v-html="formatDateToString(item.enddate)"></td>
               <td v-html="item.status"></td>
-              <td class="editbuttontd">
+              <td>
                 <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservation(index)"><i class="fas fa-edit"></i></button>
               </td>
             </tr>
@@ -69,24 +69,100 @@
         </table>
       </div>
 
-      <div class="formmakereservation" v-if="items[activeIndex]">
-        <form action="" v-visible="makeReservationForm">
-          <input class="input" type="time" v-model="startTime">
-          <input class="input" type="time" v-model="endTime">
-          <input class="input" type="date" v-model="startdate">
-          <input class="input" type="date" v-model="enddate">
-          <button class="button is-primary" type="button" name="button" :disabled="reservatebuttonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
-        </form>
+      <div class="formmakereservation" v-if="items[activeIndex]" v-show="activeIndex > -1">
+        <div class="tile is-ancestor">
+          <div class="tile is-parent tilereservationform">
+            <div class="tile is-child box">
+              <form class="makereservationform" action="">
+                <div class="field dates">
+                  <div class="startdate">
+                    <label class="label">Startdate</label>
+                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="startdate">
+                  </div>
+
+                  <div class="enddate">
+                    <label class="label">Enddate</label>
+                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="enddate">
+                  </div>
+                </div>
+
+                <div class="field time">
+                  <div class="starttime">
+                    <label class="label">Starttime</label>
+                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="startTime">
+                  </div>
+
+                  <div class="endtime">
+                    <label class="label">Endtime</label>
+                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="endTime">
+                  </div>
+                </div>
+
+                <div class="field description">
+                  <label class="label">Description/Client</label>
+                  <textarea class="textarea" :disabled="acceptIsClicked[activeIndex]" v-model="description"></textarea>
+                </div>
+              </form>
+              <div class="reservatebutton">
+                <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="formmakereservation" v-if="items[activeIndex]">
-        <form action="" v-visible="addInformationToReservation">
-          <input class="input" type="number" v-model="kmstart">
-          <input class="input" type="number" v-model="kmend">
-          <input class="input" type="text" v-model="zipcodedeparture">
-          <input class="input" type="text" v-model="zipcodedestination">
-          <button class="button is-primary" type="button" name="button" :disabled="saveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Save</button>
-        </form>
+      <div class="formmakereservation" v-if="items[activeIndex]" v-show="false">
+        <div class="tile is-ancestor">
+          <div class="tile is-parent tilereservationform">
+            <div class="tile is-child box">
+              <form class="makereservationform" action="">
+                <div class="field dates">
+                  <div class="kmstart">
+                    <label class="label">Mileage start</label>
+                    <input class="input" type="number" v-model="kmstart">
+                  </div>
+
+                  <div class="kmend">
+                    <label class="label">Mileage end</label>
+                    <input class="input" type="number" v-model="kmend">
+                  </div>
+                </div>
+
+                <div class="field time">
+                  <div class="zipcodedeparture">
+                    <label class="label">Zipcode departure</label>
+                    <input class="input" type="text" v-model="zipcodedeparture">
+                  </div>
+
+                  <div class="zipcodedestination">
+                    <label class="label">Zipcode destination</label>
+                    <input class="input" type="text" v-model="zipcodedestination">
+                  </div>
+                </div>
+              </form>
+              <div class="reservatebutton">
+                <button class="button is-primary" type="button" name="button" :disabled="saveButtonIsDisabled" v-on:click="onClickSaveButton">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" :class="{'is-active': activeModalId === 'modal-warning'}">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Warning!</p>
+          <button class="delete" aria-label="close" v-on:click="onClickCloseModal"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Don't forget your mileage! These must be entered in <b>My reservations</b> after your ride.</p>
+        </section>
+        <footer class="modal-card-foot warningbuttons">
+            <button class="button" v-on:click="onClickCloseModal">Cancel</button>
+            <button class="button is-primary" v-on:click="onClickContinueButton">Continue</button>
+        </footer>
       </div>
     </div>
 
@@ -102,17 +178,16 @@ export default {
     return {
       activeIndex: -1,
 
-      makeReservationForm: [],
       allReservations: true,
 
       approvedOrNot: [],
+      acceptIsClicked: [],
 
       // Editable Reserve Object
       startdate: '',
       enddate: '',
       startTime: '',
       endTime: '',
-      id: 1,
       status: 'In progress',
 
       kmstart: 0,
@@ -122,11 +197,13 @@ export default {
       description: '',
 
       items: [],
+
+      activeModalId: '',
     }
   },
 
   computed: {
-    reservatebuttonIsDisabled(){
+    reserveButtonIsDisabled(){
       var currentDate = new Date();
       var convertedcurrentdate = moment(this.formatDateToString(currentDate), "D/M/YYYY").unix();
       var str = moment(this.formatDateToString(this.startdate), "D/M/YYYY").unix();
@@ -162,7 +239,7 @@ export default {
     saveButtonIsDisabled(){
       const kmEndIsBiggerThanKmstart = parseInt(this.kmend) >= parseInt(this.kmstart);
       const zeroKilometers = this.kmend != 0 && this.kmstart != 0;
-      return (kmEndIsBiggerThanKmstart && zeroKilometers);
+      return !(kmEndIsBiggerThanKmstart && zeroKilometers);
     }
   },
 
@@ -187,10 +264,11 @@ export default {
   methods: {
     onClickFillInInformation: function(index){
       this.activeIndex = index;
+      return;
     },
 
     onClickEditReservation: function(index){
-      this.activeIndex = index
+      this.activeIndex = index;
       return;
     },
 
@@ -210,7 +288,6 @@ export default {
 
     onClickMakeReservationButton: function(event){
       this.items.push ({
-        // id: 0
         startTime: "",
         endTime: "",
         startdate: "",
@@ -224,10 +301,9 @@ export default {
       });
 
       this.approvedOrNot.push(false);
-      console.log(this.approvedOrNot);
-      this.makeReservationForm.push(true);
-
+      this.acceptIsClicked.push(false);
       this.onClickEditReservation(this.items.length -1);
+      return;
     },
 
     onClickConfirmEditReservation: function(event){
@@ -235,16 +311,41 @@ export default {
       this.items[this.activeIndex].endTime = this.endTime;
       this.items[this.activeIndex].startdate = this.startdate;
       this.items[this.activeIndex].enddate = this.enddate;
+      this.items[this.activeIndex].description = this.description;
+
+      this.activeModalId = "modal-warning";
+      return;
     },
 
     onClickAcceptReservation: function(event){
       this.items[this.activeIndex].status = 'Approved';
-
       this.approvedOrNot.splice(this.activeIndex, 1, true);
-      console.log(this.approvedOrNot  );
-      this.makeReservationForm.splice(this.activeIndex, 1, false);
+      this.acceptIsClicked.splice(this.activeIndex, 1, true);
       this.onClickEditReservation(this.items.length -1);
+      return;
+    },
+
+    onClickCloseModal: function(event){
+      this.activeModalId = "";
+      return;
+    },
+
+    onClickContinueButton: function(event){
+      this.onClickEditReservation(this.items.length -1);
+      this.activeModalId = "";
+      return;
+    },
+
+    onClickSaveButton: function(event){
+      this.items[this.activeIndex].kmstart = this.kmstart;
+      this.items[this.activeIndex].kmend = this.kmend;
+      this.items[this.activeIndex].zipcodedeparture = this.zipcodedeparture;
+      this.items[this.activeIndex].zipcodedestination = this.zipcodedestination;
+
+      this.items[this.activeIndex].status = 'Completed';
+      return;
     }
+
   }
 }
 </script>

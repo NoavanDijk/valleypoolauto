@@ -55,11 +55,6 @@ $size-5: 1.1rem;
   cursor: pointer;
 }
 
-.input {
-  margin: 1em;
-  width: 22.5%;
-}
-
 .headerdate{
   width: 45%;
   margin: 0;
@@ -70,9 +65,61 @@ $size-5: 1.1rem;
 }
 
 .formmakereservation{
-  margin: 1em;
+  margin-top: 1em;
+  min-width: 669px;
 }
 
 .editbutton{
   border: 0px;
+  height: 25px;
+}
+
+.warningbuttons{
+  flex: display;
+  justify-content: space-between;
+}
+
+.makereservationform{
+  width: 50%;
+}
+
+.input{
+  margin-bottom: 0.5em;
+}
+
+.tilereservationform{
+  justify-content: flex-start;
+}
+
+.dates, .time{
+  display: flex;
+}
+
+.startdate, .starttime{
+  width: 80%;
+  margin-right: 1em;
+}
+
+.enddate, .endtime{
+  width: 80%;
+}
+
+.reservatebutton{
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5em;
+}
+
+.box{
+  box-shadow: 0 0 0 0;
+  border: 1px solid #dbdbdb;
+}
+
+.kmstart{
+  margin-right: 1em;
+}
+
+.zipcodedeparture{
+  margin-right: 1em;
+  margin-top: 1.5em;
 }
