@@ -41,7 +41,7 @@
       </div>
 
       <div class="reservationstable">
-        <table class="table" v-visible="allReservations">
+        <table class="table is-hoverable" v-visible="allReservations">
           <thead>
             <tr>
               <th>Starttime</th>
@@ -51,67 +51,79 @@
               <th>Enddate</th>
               <th>Status</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" v-on:click="onClickEditReservation(index)">
             <tr>
               <td v-html="item.startTime"></td>
               <td v-html="item.endTime"></td>
-              <td>Name</th>
+              <td>Firstname Surname</th>
               <td v-html="formatDateToString(item.startdate)"></td>
               <td v-html="formatDateToString(item.enddate)"></td>
               <td v-html="item.status"></td>
               <td>
-                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm"><i class="fas fa-edit"></i></button>
+                <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)">Enter mileage</button>
+              </td>
+              <td>
+                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><i class="fas fa-edit"></i></button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeInformationForm[activeIndex]">
+      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeReservationForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
             <div class="tile is-child box">
-              <form class="makereservationform" action="">
-                <div class="field dates">
-                  <div class="startdate">
-                    <label class="label">Startdate</label>
-                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="startdate">
+              <div class="makereservationwithdelete">
+                <form class="makereservationform" action="">
+                  <div class="field dates">
+                    <div class="startdate">
+                      <label class="label">Startdate</label>
+                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="startdate">
+                    </div>
+
+                    <div class="enddate">
+                      <label class="label">Enddate</label>
+                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="enddate">
+                    </div>
                   </div>
 
-                  <div class="enddate">
-                    <label class="label">Enddate</label>
-                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="enddate">
+                  <div class="field time">
+                    <div class="starttime">
+                      <label class="label">Starttime</label>
+                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="startTime">
+                    </div>
+
+                    <div class="endtime">
+                      <label class="label">Endtime</label>
+                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="endTime">
+                    </div>
                   </div>
+
+                  <div class="field description">
+                    <label class="label">Description/Client</label>
+                    <textarea class="textarea" :disabled="acceptIsClicked[activeIndex]" v-model="description"></textarea>
+                  </div>
+                </form>
+
+                <div class="divdeletebutton">
+                  <button class="button deletebutton" type="button" name="button"><i class="fas fa-trash"></i></button>
                 </div>
+              </div>
 
-                <div class="field time">
-                  <div class="starttime">
-                    <label class="label">Starttime</label>
-                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="startTime">
-                  </div>
-
-                  <div class="endtime">
-                    <label class="label">Endtime</label>
-                    <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="endTime">
-                  </div>
-                </div>
-
-                <div class="field description">
-                  <label class="label">Description/Client</label>
-                  <textarea class="textarea" :disabled="acceptIsClicked[activeIndex]" v-model="description"></textarea>
-                </div>
-              </form>
               <div class="reservatebutton">
                 <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
               </div>
+
             </div>
           </div>
         </div>
       </div>
 
-      <div class="formmakereservation" v-if="items[activeIndex]" v-show="false">
+      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showAddKmAndZipcodesForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
             <div class="tile is-child box">
@@ -122,7 +134,7 @@
                     <input class="input" type="number" v-model="kmstart">
                   </div>
 
-                  <div class="kmend">
+                  <div>
                     <label class="label">Mileage end</label>
                     <input class="input" type="number" v-model="kmend">
                   </div>
@@ -134,7 +146,7 @@
                     <input class="input" type="text" v-model="zipcodedeparture">
                   </div>
 
-                  <div class="zipcodedestination">
+                  <div>
                     <label class="label">Zipcode destination</label>
                     <input class="input" type="text" v-model="zipcodedestination">
                   </div>
@@ -181,8 +193,10 @@ export default {
       allReservations: true,
 
       approvedOrNot: [],
+      approvedOrNotMileage: [],
       acceptIsClicked: [],
-      showMakeInformationForm: [],
+      showMakeReservationForm: [],
+      showAddKmAndZipcodesForm: [],
 
       // Editable Reserve Object
       startdate: '',
@@ -240,7 +254,9 @@ export default {
     saveButtonIsDisabled(){
       const kmEndIsBiggerThanKmstart = parseInt(this.kmend) >= parseInt(this.kmstart);
       const zeroKilometers = this.kmend != 0 && this.kmstart != 0;
-      return !(kmEndIsBiggerThanKmstart && zeroKilometers);
+      const zipcodesAreFilledIn = this.zipcodedeparture.length > 0
+                               && this.zipcodedestination.length > 0;
+      return !(kmEndIsBiggerThanKmstart && zeroKilometers && zipcodesAreFilledIn);
     }
   },
 
@@ -263,20 +279,6 @@ export default {
   },
 
   methods: {
-    onClickFillInInformation: function(index){
-      this.activeIndex = index;
-      return;
-    },
-
-    onClickEditReservation: function(index){
-      this.activeIndex = index;
-      return;
-    },
-
-    onClickEditReservationForm: function(){
-      this.showMakeInformationForm.splice(this.activeIndex, 1, true);
-    },
-
     formatDateToString: function(date){
       var d = new Date(date);
       var retVal;
@@ -306,10 +308,28 @@ export default {
       });
 
       this.approvedOrNot.push(false);
+      this.approvedOrNotMileage.push(true);
       this.acceptIsClicked.push(false);
-      this.showMakeInformationForm.push(true);
-      console.log(this.showMakeInformationForm);
+      this.showMakeReservationForm.push(true);
+      this.showAddKmAndZipcodesForm.push(false);
       this.onClickEditReservation(this.items.length -1);
+      return;
+    },
+
+    onClickFillInInformationForm: function(index){
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, true);
+      return;
+    },
+
+    onClickEditReservation: function(index){
+      this.activeIndex = index;
+      return;
+    },
+
+    onClickEditReservationForm: function(index){
+      this.showMakeReservationForm.splice(this.activeIndex, 1, true);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
       return;
     },
 
@@ -327,14 +347,12 @@ export default {
     onClickAcceptReservation: function(event){
       this.items[this.activeIndex].status = 'Approved';
       this.approvedOrNot.splice(this.activeIndex, 1, true);
-      this.acceptIsClicked.splice(this.activeIndex, 1, true);
-      this.showMakeInformationForm.splice(this.activeIndex, 1, false);
-      this.onClickEditReservation(this.items.length -1);
-      return;
-    },
+      this.approvedOrNotMileage.splice(this.activeIndex, 1, false);
 
-    onClickReservation: function(index){
-      this.showMakeInformationForm = true;
+      this.acceptIsClicked.splice(this.activeIndex, 1, true);
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+
+      this.onClickEditReservation(this.items.length -1);
       return;
     },
 
@@ -345,7 +363,7 @@ export default {
 
     onClickContinueButton: function(event){
       this.onClickEditReservation(this.items.length -1);
-      this.showMakeInformationForm.splice(this.activeIndex, 1, false);
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.activeModalId = "";
       return;
     },
@@ -357,9 +375,9 @@ export default {
       this.items[this.activeIndex].zipcodedestination = this.zipcodedestination;
 
       this.items[this.activeIndex].status = 'Completed';
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
       return;
     }
-
   }
 }
 </script>
