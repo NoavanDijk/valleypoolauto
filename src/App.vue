@@ -16,7 +16,7 @@
       <div id="navbarBasic" class="navbar-menu">
         <div class="navbar-end">
           <div class="navbar-item">
-            <a class="navbar-item">
+            <a href="App.vue" class="navbar-item">
               Reserve the car
             </a>
             <a class="navbar-item">
@@ -53,8 +53,8 @@
               <th></th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]">
+          <tbody v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" v-on:click="onClickEditReservation(index)">
+            <tr>
               <td v-html="item.startTime"></td>
               <td v-html="item.endTime"></td>
               <td>Name</th>
@@ -62,14 +62,14 @@
               <td v-html="formatDateToString(item.enddate)"></td>
               <td v-html="item.status"></td>
               <td>
-                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservation(index)"><i class="fas fa-edit"></i></button>
+                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm"><i class="fas fa-edit"></i></button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="formmakereservation" v-if="items[activeIndex]" v-show="activeIndex > -1">
+      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeInformationForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
             <div class="tile is-child box">
@@ -182,6 +182,7 @@ export default {
 
       approvedOrNot: [],
       acceptIsClicked: [],
+      showMakeInformationForm: [],
 
       // Editable Reserve Object
       startdate: '',
@@ -272,6 +273,10 @@ export default {
       return;
     },
 
+    onClickEditReservationForm: function(){
+      this.showMakeInformationForm.splice(this.activeIndex, 1, true);
+    },
+
     formatDateToString: function(date){
       var d = new Date(date);
       var retVal;
@@ -302,6 +307,8 @@ export default {
 
       this.approvedOrNot.push(false);
       this.acceptIsClicked.push(false);
+      this.showMakeInformationForm.push(true);
+      console.log(this.showMakeInformationForm);
       this.onClickEditReservation(this.items.length -1);
       return;
     },
@@ -321,7 +328,13 @@ export default {
       this.items[this.activeIndex].status = 'Approved';
       this.approvedOrNot.splice(this.activeIndex, 1, true);
       this.acceptIsClicked.splice(this.activeIndex, 1, true);
+      this.showMakeInformationForm.splice(this.activeIndex, 1, false);
       this.onClickEditReservation(this.items.length -1);
+      return;
+    },
+
+    onClickReservation: function(index){
+      this.showMakeInformationForm = true;
       return;
     },
 
@@ -332,6 +345,7 @@ export default {
 
     onClickContinueButton: function(event){
       this.onClickEditReservation(this.items.length -1);
+      this.showMakeInformationForm.splice(this.activeIndex, 1, false);
       this.activeModalId = "";
       return;
     },
