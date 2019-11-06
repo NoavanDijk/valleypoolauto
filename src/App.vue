@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- Navigation bar -->
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="https://www.thevalley.nl/">
@@ -27,6 +28,7 @@
       </div>
     </nav>
 
+<!-- Datepicker to sort the reservations and the Reserve here button -->
     <div class="content">
       <div class="headerdatebutton">
         <div class="sortbydate">
@@ -40,6 +42,7 @@
         </div>
       </div>
 
+<!-- Table with all the reservations -->
       <div class="reservationstable">
         <table class="table is-hoverable" v-visible="allReservations">
           <thead>
@@ -73,6 +76,7 @@
         </table>
       </div>
 
+<!-- Form to make a reservation -->
       <div class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeReservationForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
@@ -123,6 +127,7 @@
         </div>
       </div>
 
+<!-- Form to enter the mileage and the zipcodes -->
       <div class="formmakereservation" v-if="items[activeIndex]" v-show="showAddKmAndZipcodesForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
@@ -161,6 +166,7 @@
       </div>
     </div>
 
+<!-- Warning modal after you make a reservation -->
     <div class="modal" :class="{'is-active': activeModalId === 'modal-warning'}">
       <div class="modal-background"></div>
       <div class="modal-card">
@@ -179,6 +185,7 @@
     </div>
 
     <button class="button is-primary" type="button" name="button" v-on:click="onClickAcceptReservation">Accept</button>
+    <button class="button is-secondary" type="button" name="button">Turn down</button>
   </div>
 </template>
 
