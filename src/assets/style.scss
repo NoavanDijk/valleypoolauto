@@ -4,7 +4,6 @@ $title-family: "Merriweather";
 $size-5: 1.1rem;
 
 @import "~bulma/bulma";
-
 #app {
   display: flex;
   flex-direction: column;
@@ -14,6 +13,7 @@ $size-5: 1.1rem;
 
 .navbar {
   width: 100%;
+  margin-bottom: 1em;
 }
 
 .content{
@@ -25,10 +25,25 @@ $size-5: 1.1rem;
 
 .active {
   box-shadow: 0 0 2px;
+  border-radius: 4px;
 }
 
 .input{
   margin-bottom: 0.5em;
+}
+
+// Scroll
+html{
+  scroll-behavior: smooth;
+}
+
+a, a:hover{
+  color: white;
+}
+
+.aedit, .aedit:hover, .aentermileage, .aentermileage:hover{
+  color: #363636;
+  text-decoration: none;
 }
 
 // Header content --> date and reservebutton
@@ -49,7 +64,7 @@ $size-5: 1.1rem;
 }
 
 .headerdate{
-  width: 45%;
+  width: 30%;
   margin: 0;
 }
 
@@ -74,6 +89,10 @@ $size-5: 1.1rem;
   height: 25px;
 }
 
+.editbutton:active{
+  outline: none;
+}
+
 .entermileagebutton{
   height: 25px;
 }
@@ -81,11 +100,10 @@ $size-5: 1.1rem;
 // General stuff for the forms
 .formmakereservation{
   margin-top: 1em;
-  min-width: 669px;
 }
 
 .makereservationform{
-  width: 50%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -121,12 +139,17 @@ $size-5: 1.1rem;
 }
 
 .makereservationwithdelete{
-  display: flex;
+  display: inline-flex;
+  width: 50%;
+}
+
+.deleteandreservebutton{
+  display: inline;
 }
 
 // Delete button in reservation form
 .divdeletebutton{
-  display: flex;
+  display: inline-flex;
   justify-content: flex-end;
   width: 49.5%;
 }
@@ -145,8 +168,126 @@ $size-5: 1.1rem;
   margin-right: 1em;
 }
 
-// Warning modal
+// Warning modals
 .warningbuttons{
   flex: display;
   justify-content: space-between;
+}
+
+.footerdeletewarning{
+  display: flex;
+  justify-content: space-between;
+}
+
+table{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+@media
+  only screen
+  and (max-width: 760px), (min-device-width: 768px)
+  and (max-device-width: 1024px)  {
+
+  // Table
+	table, thead, tbody, th, td, tr {
+		display: block;
+	}
+
+	// Hide table headers (but not display: none;, for accessibility)
+	thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+  tr {
+    margin: 0 0 1rem 0;
+  }
+
+  tr:nth-child(odd) {
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+  }
+
+	td {
+		// Behave  like a "row"
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	td:before {
+		// Now like a table header
+		// Top/left values mimic padding
+		top: 0;
+		left: 6px;
+		width: 45%;
+		padding-right: 130px;
+		white-space: nowrap;
+	}
+
+	.tdstartdate:before {
+		padding-right: 105px;
+	}
+
+	.tdenddate:before {
+		padding-right: 113px;
+	}
+
+	.tdbuttons:before {
+		padding-right: 157px;
+	}
+
+  .content table td, .content table th {
+    border: 1px solid #dbdbdb;
+  }
+
+  .headerdate{
+    width: 81%;
+  }
+
+	// Label the data
+	td:nth-of-type(1):before { content: "Starttime"; }
+	td:nth-of-type(2):before { content: "Endtime"; }
+	td:nth-of-type(3):before { content: "Name"; }
+	td:nth-of-type(4):before { content: "Startdate"; }
+	td:nth-of-type(5):before { content: "Enddate"; }
+	td:nth-of-type(6):before { content: "Status"; }
+	td:nth-of-type(7):before { content: ""; }
+	td:nth-of-type(8):before { content: ""; }
+
+  .formmakereservation{
+    margin-top: 0;
+  }
+
+  .content{
+    min-width: 350px;
+  }
+
+  .makereservationform, .makereservationwithdelete{
+    width: 100%;
+  }
+
+  .divdeletebutton{
+    justify-content: flex-start;
+  }
+
+  .reservatebutton{
+    display: inline-flex;
+    justify-content: flex-end;
+    width: 40%;
+    margin-top: 0;
+  }
+
+  .deleteandreservebutton{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+  }
+
+  .headerdatebutton{
+    margin-bottom: 0.5em;
+  }
 }

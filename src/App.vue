@@ -5,6 +5,7 @@
       <div class="navbar-brand">
         <a class="navbar-item" href="https://www.thevalley.nl/">
           <img id="logonavbar" src="./assets/images/logo.svg" width="92" height="28">
+          <img id="logonavbar" src="./assets/images/poolauto.svg" width="75" height="28">
         </a>
 
         <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasic">
@@ -37,14 +38,14 @@
 
         <div class="addreservation">
           <button class="button addreservationbutton is-primary" type="button" name="button" v-on:click="onClickMakeReservationButton">
-            Reserve here
+            <a href="#section1"> Reserve here</a>
           </button>
         </div>
       </div>
 
 <!-- Table with all the reservations -->
       <div class="reservationstable">
-        <table class="table is-hoverable" v-visible="allReservations">
+        <table class="table" v-visible="allReservations">
           <thead>
             <tr>
               <th>Starttime</th>
@@ -57,19 +58,19 @@
               <th></th>
             </tr>
           </thead>
-          <tbody v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" v-on:click="onClickEditReservation(index)">
+          <tbody v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" >
             <tr>
-              <td v-html="item.startTime"></td>
-              <td v-html="item.endTime"></td>
+              <td class="tdstartdate" v-html="item.startTime"></td>
+              <td class="tdenddate" v-html="item.endTime"></td>
               <td>Firstname Surname</th>
-              <td v-html="formatDateToString(item.startdate)"></td>
-              <td v-html="formatDateToString(item.enddate)"></td>
+              <td class="tdstartdate" v-html="formatDateToString(item.startdate)"></td>
+              <td class="tdenddate" v-html="formatDateToString(item.enddate)"></td>
               <td v-html="item.status"></td>
-              <td>
-                <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)">Enter mileage</button>
+              <td class="tdbuttons">
+                <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
               </td>
-              <td>
-                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><i class="fas fa-edit"></i></button>
+              <td class="tdbuttons">
+                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
               </td>
             </tr>
           </tbody>
@@ -77,7 +78,7 @@
       </div>
 
 <!-- Form to make a reservation -->
-      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeReservationForm[activeIndex]">
+      <div id="section1" class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeReservationForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
             <div class="tile is-child box">
@@ -86,41 +87,44 @@
                   <div class="field dates">
                     <div class="startdate">
                       <label class="label">Startdate</label>
-                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="startdate">
+                      <input class="input" type="date" v-model="startdate">
                     </div>
 
                     <div class="enddate">
                       <label class="label">Enddate</label>
-                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="date" v-model="enddate">
+                      <input class="input" type="date" v-model="enddate">
                     </div>
                   </div>
 
                   <div class="field time">
                     <div class="starttime">
                       <label class="label">Starttime</label>
-                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="startTime">
+                      <input class="input" type="time" v-model="startTime">
                     </div>
 
                     <div class="endtime">
                       <label class="label">Endtime</label>
-                      <input class="input" :disabled="acceptIsClicked[activeIndex]" type="time" v-model="endTime">
+                      <input class="input" type="time" v-model="endTime">
                     </div>
                   </div>
 
                   <div class="field description">
                     <label class="label">Description/Client</label>
-                    <textarea class="textarea" :disabled="acceptIsClicked[activeIndex]" v-model="description"></textarea>
+                    <textarea class="textarea" v-model="description"></textarea>
                   </div>
                 </form>
+              </div>
 
+              <div class="deleteandreservebutton">
                 <div class="divdeletebutton">
-                  <button class="button deletebutton" type="button" name="button"><i class="fas fa-trash"></i></button>
+                  <button class="button deletebutton" type="button" name="button" v-on:click="onClickOpenDeleteWarning"><i class="fas fa-trash"></i></button>
+                </div>
+
+                <div class="reservatebutton">
+                  <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
                 </div>
               </div>
 
-              <div class="reservatebutton">
-                <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
-              </div>
 
             </div>
           </div>
@@ -128,7 +132,7 @@
       </div>
 
 <!-- Form to enter the mileage and the zipcodes -->
-      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showAddKmAndZipcodesForm[activeIndex]">
+      <div id="section2" class="formmakereservation" v-if="items[activeIndex]" v-show="showAddKmAndZipcodesForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
             <div class="tile is-child box">
@@ -184,8 +188,26 @@
       </div>
     </div>
 
+  <!-- Warning modal if you want to delete a reservation -->
+    <div class="modal js-modalconfirmdelete" :class="{'is-active': activeModalId === 'modal-delete'}">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title is-family-secondary">Delete</p>
+          <button class="delete" aria-label="close" v-on:click="onClickCloseModal"></button>
+        </header>
+        <section class="modal-card-body">
+          <p>Are you sure you want to delete this reservation? You cannot undo this action.</p>
+        </section>
+        <footer class="modal-card-foot footerdeletewarning">
+          <button class="button is-text" v-on:click="onClickCloseModal">Cancel</button>
+          <button class="button is-primary" v-on:click="onClickDeleteReservation">Delete</button>
+        </footer>
+      </div>
+    </div>
+
     <button class="button is-primary" type="button" name="button" v-on:click="onClickAcceptReservation">Accept</button>
-    <button class="button is-secondary" type="button" name="button">Turn down</button>
+    <button class="button is-secondary" type="button" name="button" v-on:click="onClickTurnDownReservation">Turn down</button>
   </div>
 </template>
 
@@ -201,7 +223,6 @@ export default {
 
       approvedOrNot: [],
       approvedOrNotMileage: [],
-      acceptIsClicked: [],
       showMakeReservationForm: [],
       showAddKmAndZipcodesForm: [],
 
@@ -316,7 +337,6 @@ export default {
 
       this.approvedOrNot.push(false);
       this.approvedOrNotMileage.push(true);
-      this.acceptIsClicked.push(false);
       this.showMakeReservationForm.push(true);
       this.showAddKmAndZipcodesForm.push(false);
       this.onClickEditReservation(this.items.length -1);
@@ -324,6 +344,7 @@ export default {
     },
 
     onClickFillInInformationForm: function(index){
+      this.activeIndex = index;
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, true);
       return;
@@ -335,8 +356,10 @@ export default {
     },
 
     onClickEditReservationForm: function(index){
+      this.activeIndex = index;
       this.showMakeReservationForm.splice(this.activeIndex, 1, true);
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+
       return;
     },
 
@@ -356,10 +379,9 @@ export default {
       this.approvedOrNot.splice(this.activeIndex, 1, true);
       this.approvedOrNotMileage.splice(this.activeIndex, 1, false);
 
-      this.acceptIsClicked.splice(this.activeIndex, 1, true);
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
 
-      this.onClickEditReservation(this.items.length -1);
+      // this.onClickEditReservation(this.items.length -1);
       return;
     },
 
@@ -384,6 +406,24 @@ export default {
       this.items[this.activeIndex].status = 'Completed';
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
       return;
+    },
+
+    onClickOpenDeleteWarning: function(event){
+      this.activeModalId = "modal-delete";
+    },
+
+    onClickDeleteReservation: function(event){
+      this.items.splice(this.activeIndex, 1);
+      this.activeIndex = this.items.length - 1;
+      this.activeModalId = "";
+    },
+
+    onClickTurnDownReservation: function(event){
+      this.items.splice(this.activeIndex, 1);
+      this.activeIndex = this.items.length - 1;
+      console.log(this.activeIndex);
+      console.log("turn down geklikt");
+      console.log(this.items);
     }
   }
 }
