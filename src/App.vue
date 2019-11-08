@@ -38,11 +38,11 @@
 
         <div class="sortbuttons">
           <div class="divsortbutton">
-            <button class="button is-primary sortbutton" type="button" name="button" v-on:click="sortedArray">Sort</button>
+            <button class="button is-primary sortbutton" type="button" name="button" v-on:click="onClickSortedArray">Sort</button>
           </div>
 
           <div class="divundosortbutton">
-            <button class="button is-text undosortbutton" type="button" name="button" v-on:click="clearSortedArray">Undo sort</button>
+            <button class="button is-text undosortbutton" type="button" name="button" v-on:click="onClickClearSortedArray">Undo sort</button>
           </div>
         </div>
 
@@ -134,7 +134,6 @@
                   <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
                 </div>
               </div>
-
 
             </div>
           </div>
@@ -399,12 +398,6 @@ export default {
     },
 
     onClickConfirmEditReservation: function(event){
-      this.items[this.activeIndex].startTime = this.startTime;
-      this.items[this.activeIndex].endTime = this.endTime;
-      this.items[this.activeIndex].startdate = this.startdate;
-      this.items[this.activeIndex].enddate = this.enddate;
-      this.items[this.activeIndex].description = this.description;
-
       this.activeModalId = "modal-warning";
       return;
     },
@@ -427,7 +420,21 @@ export default {
       this.onClickEditReservation(this.items.length -1);
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.activeModalId = "";
-      return;
+
+      this.items[this.activeIndex].startTime = this.startTime;
+      this.items[this.activeIndex].endTime = this.endTime;
+      this.items[this.activeIndex].startdate = this.startdate;
+      this.items[this.activeIndex].enddate = this.enddate;
+      this.items[this.activeIndex].description = this.description;
+
+      function compare(a, b){
+        if(a.startTime < b.startTime)
+          return -1;
+        if(a.startTime > b.startTime)
+          return 1;
+        return 0;
+      }return this.items.sort(compare);
+      // return;
     },
 
     onClickSaveButton: function(event){
@@ -459,7 +466,8 @@ export default {
       return;
     },
 
-    sortedArray: function(){
+    onClickSortedArray: function(){
+      // date
       for(var i = 0; i < this.items.length; i++){
         if(this.items[i].startdate == this.sortDate){
           this.showReservation.splice(i, 1, true);
@@ -467,10 +475,19 @@ export default {
           this.showReservation.splice(i, 1, false);
         }
       }
-      return;
+      // time
+        function compare(a, b){
+          console.log("tijd sorteren");
+          if(a.startTime < b.startTime)
+            return -1;
+          if(a.startTime > b.startTime)
+            return 1;
+          return 0;
+        }
+      return this.items.sort(compare);
     },
 
-    clearSortedArray: function(){
+    onClickClearSortedArray: function(){
       for(var i = 0; i< this.items.length; i++){
         this.showReservation.splice(i, 1, true);
         this.sortDate = '';
