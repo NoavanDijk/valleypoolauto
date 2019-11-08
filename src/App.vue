@@ -33,12 +33,22 @@
     <div class="content">
       <div class="headerdatebutton">
         <div class="sortbydate">
-          <input class="input headerdate" type="date">
+          <input class="input headerdate" type="date" v-model="sortDate">
+        </div>
+
+        <div class="sortbuttons">
+          <div class="divsortbutton">
+            <button class="button is-primary sortbutton" type="button" name="button" v-on:click="sortedArray">Sort</button>
+          </div>
+
+          <div class="divundosortbutton">
+            <button class="button is-text undosortbutton" type="button" name="button" v-on:click="clearSortedArray">Undo sort</button>
+          </div>
         </div>
 
         <div class="addreservation">
           <button class="button addreservationbutton is-primary" type="button" name="button" v-on:click="onClickMakeReservationButton">
-            <a href="#section1"> Reserve here</a>
+            <a href="#section1">Reserve here</a>
           </button>
         </div>
       </div>
@@ -58,7 +68,7 @@
               <th></th>
             </tr>
           </thead>
-          <tbody v-for="(item, index) in items" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" >
+          <tbody v-for="(item, index) in items" v-show="showReservation[index]" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" >
             <tr>
               <td class="tdstartdate" v-html="item.startTime"></td>
               <td class="tdenddate" v-html="item.endTime"></td>
@@ -221,6 +231,8 @@ export default {
 
       allReservations: true,
 
+      showReservation: [],
+
       approvedOrNot: [],
       approvedOrNotMileage: [],
       showMakeReservationForm: [],
@@ -232,6 +244,10 @@ export default {
       startTime: '',
       endTime: '',
       status: 'In progress',
+
+      sortDate: '',
+
+      viewDate: '',
 
       kmstart: 0,
       kmend: 0,
@@ -285,7 +301,25 @@ export default {
       const zipcodesAreFilledIn = this.zipcodedeparture.length > 0
                                && this.zipcodedestination.length > 0;
       return !(kmEndIsBiggerThanKmstart && zeroKilometers && zipcodesAreFilledIn);
-    }
+    },
+
+    // sortedArray2: function(){
+    //   function compare(a, b){
+    //     if(a.startdate < b.startdate)
+    //     console.log(a.startdate);
+    //     console.log(b.startdate);
+    //       return -1;
+    //
+    //     if(a.startdate > b.startdate)
+    //       return 1;
+    //     if(a.startdate == '')
+    //       console.log("startdate leeg");
+    //       return 1;
+    //     return 0;
+    //   }
+    //
+    //   return this.items.sort(compare);
+    // }
   },
 
   watch: {
@@ -339,6 +373,8 @@ export default {
       this.approvedOrNotMileage.push(true);
       this.showMakeReservationForm.push(true);
       this.showAddKmAndZipcodesForm.push(false);
+
+      this.showReservation.push(true);
       this.onClickEditReservation(this.items.length -1);
       return;
     },
@@ -359,7 +395,6 @@ export default {
       this.activeIndex = index;
       this.showMakeReservationForm.splice(this.activeIndex, 1, true);
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
-
       return;
     },
 
@@ -380,8 +415,6 @@ export default {
       this.approvedOrNotMileage.splice(this.activeIndex, 1, false);
 
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-
-      // this.onClickEditReservation(this.items.length -1);
       return;
     },
 
@@ -410,21 +443,40 @@ export default {
 
     onClickOpenDeleteWarning: function(event){
       this.activeModalId = "modal-delete";
+      return;
     },
 
     onClickDeleteReservation: function(event){
       this.items.splice(this.activeIndex, 1);
       this.activeIndex = this.items.length - 1;
       this.activeModalId = "";
+      return;
     },
 
     onClickTurnDownReservation: function(event){
       this.items.splice(this.activeIndex, 1);
       this.activeIndex = this.items.length - 1;
-      console.log(this.activeIndex);
-      console.log("turn down geklikt");
-      console.log(this.items);
+      return;
+    },
+
+    sortedArray: function(){
+      for(var i = 0; i < this.items.length; i++){
+        if(this.items[i].startdate == this.sortDate){
+          this.showReservation.splice(i, 1, true);
+        }else{
+          this.showReservation.splice(i, 1, false);
+        }
+      }
+      return;
+    },
+
+    clearSortedArray: function(){
+      for(var i = 0; i< this.items.length; i++){
+        this.showReservation.splice(i, 1, true);
+        this.sortDate = '';
+      }
+      return;
     }
-  }
-}
+
+}}
 </script>
