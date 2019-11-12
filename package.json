@@ -12,6 +12,7 @@
     "buefy": "^0.8.6",
     "bulma": "^0.8.0",
     "core-js": "^3.3.2",
+    "moment": "^2.24.0",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.5.1",
     "vue-visible": "^1.0.2"
