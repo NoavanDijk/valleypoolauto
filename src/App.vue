@@ -217,15 +217,19 @@
 
     <button class="button is-primary" type="button" name="button" v-on:click="onClickAcceptReservation">Accept</button>
     <button class="button is-secondary" type="button" name="button" v-on:click="onClickTurnDownReservation">Turn down</button>
+
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import axios from 'axios'
 export default {
   name: 'app',
   data() {
     return {
+      errors: [],
+
       activeIndex: -1,
 
       allReservations: true,
@@ -302,23 +306,7 @@ export default {
       return !(kmEndIsBiggerThanKmstart && zeroKilometers && zipcodesAreFilledIn);
     },
 
-    // sortedArray2: function(){
-    //   function compare(a, b){
-    //     if(a.startdate < b.startdate)
-    //     console.log(a.startdate);
-    //     console.log(b.startdate);
-    //       return -1;
-    //
-    //     if(a.startdate > b.startdate)
-    //       return 1;
-    //     if(a.startdate == '')
-    //       console.log("startdate leeg");
-    //       return 1;
-    //     return 0;
-    //   }
-    //
-    //   return this.items.sort(compare);
-    // }
+
   },
 
   watch: {
@@ -337,6 +325,18 @@ export default {
         this.description = this.items[this.activeIndex].description;
       }
     }
+  },
+
+  created(){
+    let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
+    console.log("created");
+    axios.get('https://baasdemo.test.nominow.eu/baas/poolcar/reservations', {headers: config})
+    .then(response => {
+      console.log("API connectie gemaakt")
+    })
+    .catch(error => {
+      console.log("Error: " + error)
+    })
   },
 
   methods: {
@@ -434,7 +434,6 @@ export default {
           return 1;
         return 0;
       }return this.items.sort(compare);
-      // return;
     },
 
     onClickSaveButton: function(event){
@@ -477,7 +476,6 @@ export default {
       }
       // time
         function compare(a, b){
-          console.log("tijd sorteren");
           if(a.startTime < b.startTime)
             return -1;
           if(a.startTime > b.startTime)
@@ -493,7 +491,24 @@ export default {
         this.sortDate = '';
       }
       return;
-    }
+    },
+
+  //   retrieveAllCustomer: function () {
+  //     var xhr = new XMLHttpRequest();
+  //     var url = "http://baasdemo.test.nominow.eu/baas/poolcar/reservations";
+  //     xhr.open("GET", url, false);
+  //     xhr.onreadystatechange = function () {
+  //         if (this.readyState === XMLHttpRequest.DONE) {
+  //             if (this.status === 200) {
+  //                 comp.customerArray = JSON.parse(this.responseText);
+  //             } else {
+  //                 console.log(this.status, this.statusText);
+  //             }
+  //         }
+  //     };
+  //     xhr.send();
+  // }
+
 
 }}
 </script>
