@@ -330,7 +330,7 @@ export default {
   created(){
     let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
     console.log("created");
-    axios.get('https://baasdemo.test.nominow.eu/baas/poolcar/reservations', {headers: config})
+    axios.get('/baas/poolcar/reservations', {headers: config})
     .then(response => {
       console.log("API connectie gemaakt")
     })
