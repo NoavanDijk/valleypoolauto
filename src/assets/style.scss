@@ -167,12 +167,16 @@ a, a:hover{
 }
 
 // Enter km and zipcodes form
-.kmstart{
+.zipcodedeparture{
   margin-right: 1em;
 }
 
-.zipcodedeparture{
-  margin-right: 1em;
+.inputzipcodes{
+  width: 63%;
+}
+
+.inputkm{
+  width: 60%;
 }
 
 // Warning modals

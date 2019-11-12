@@ -68,14 +68,28 @@
               <th></th>
             </tr>
           </thead>
-          <tbody v-for="(item, index) in items" v-show="showReservation[index]" v-bind:class="{'active': activeIndex === index}" v-if="items[activeIndex]" >
+          <tbody v-for="(item, index) in items" v-bind:key="index"  v-bind:class="{'active': activeIndex === index}">
+            <tr v-if="items[activeIndex]" v-show="showReservation[index]">
+              <td class="tdstartdate">{{item.startTime}}</td>
+              <td class="tdenddate">{{item.endTime}}</td>
+              <td>Firstname Surname</td>
+              <td class="tdstartdate">{{formatDateToString(item.startdate)}}</td>
+              <td class="tdenddate">{{formatDateToString(item.enddate)}}</td>
+              <td>{{item.status}}</td>
+              <td class="tdbuttons">
+                <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
+              </td>
+              <td class="tdbuttons">
+                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
+              </td>
+            </tr>
             <tr>
-              <td class="tdstartdate" v-html="item.startTime"></td>
-              <td class="tdenddate" v-html="item.endTime"></td>
-              <td>Firstname Surname</th>
-              <td class="tdstartdate" v-html="formatDateToString(item.startdate)"></td>
-              <td class="tdenddate" v-html="formatDateToString(item.enddate)"></td>
-              <td v-html="item.status"></td>
+              <td >{{item.startTime}}</td>
+              <td>{{item.endTime}}</td>
+              <td>Firstname Surname</td>
+              <td >{{formatDateToString(item.startdate)}}</td>
+              <td >{{formatDateToString(item.enddate)}}</td>
+              <td>{{item.status}}</td>
               <td class="tdbuttons">
                 <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
               </td>
@@ -149,24 +163,24 @@
                 <div class="field dates">
                   <div class="kmstart">
                     <label class="label">Mileage start</label>
-                    <input class="input" type="number" v-model="kmstart">
+                    <input class="input inputkm" type="number" v-model="kmstart">
                   </div>
 
                   <div>
                     <label class="label">Mileage end</label>
-                    <input class="input" type="number" v-model="kmend">
+                    <input class="input inputkm" type="number" v-model="kmend">
                   </div>
                 </div>
 
                 <div class="field time">
                   <div class="zipcodedeparture">
                     <label class="label">Zipcode departure</label>
-                    <input class="input" type="text" v-model="zipcodedeparture">
+                    <input class="input inputzipcodes" type="text" v-model="zipcodedeparture">
                   </div>
 
                   <div>
                     <label class="label">Zipcode destination</label>
-                    <input class="input" type="text" v-model="zipcodedestination">
+                    <input class="input inputzipcodes" type="text" v-model="zipcodedestination">
                   </div>
                 </div>
               </form>
@@ -247,6 +261,7 @@ export default {
       startTime: '',
       endTime: '',
       status: 'In progress',
+      output: '',
 
       sortDate: '',
 
@@ -327,15 +342,20 @@ export default {
     }
   },
 
-  created(){
+  created: function(){
+    const self = this;
     let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
     console.log("created");
     axios.get('/baas/poolcar/reservations', {headers: config})
     .then(response => {
-      console.log("API connectie gemaakt")
+      for(let i = 0; i < response.data.length; i += 1){
+        const d = response.data[i];
+       if(d.item){ self.items.push(d.item); }
+      }
+      console.log(self.items);
     })
     .catch(error => {
-      console.log("Error: " + error)
+      console.log(error)
     })
   },
 
@@ -427,6 +447,16 @@ export default {
       this.items[this.activeIndex].enddate = this.enddate;
       this.items[this.activeIndex].description = this.description;
 
+      let currentObj = this;
+
+      const data = {item: this.items[this.activeIndex]};
+      axios.post('/baas/poolcar/reservation', {
+        json: JSON.stringify(data)
+      })
+      .catch(function(error){
+        currentObj.output = error;
+      });
+
       function compare(a, b){
         if(a.startTime < b.startTime)
           return -1;
@@ -492,23 +522,5 @@ export default {
       }
       return;
     },
-
-  //   retrieveAllCustomer: function () {
-  //     var xhr = new XMLHttpRequest();
-  //     var url = "http://baasdemo.test.nominow.eu/baas/poolcar/reservations";
-  //     xhr.open("GET", url, false);
-  //     xhr.onreadystatechange = function () {
-  //         if (this.readyState === XMLHttpRequest.DONE) {
-  //             if (this.status === 200) {
-  //                 comp.customerArray = JSON.parse(this.responseText);
-  //             } else {
-  //                 console.log(this.status, this.statusText);
-  //             }
-  //         }
-  //     };
-  //     xhr.send();
-  // }
-
-
 }}
 </script>
