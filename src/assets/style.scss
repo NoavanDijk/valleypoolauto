@@ -28,6 +28,11 @@ $size-5: 1.1rem;
   border-radius: 4px;
 }
 
+.router-link-exact-active, .router-link-active, .routerlink{
+  color: black;
+  margin-right: 1em;
+}
+
 .input{
   margin-bottom: 0.5em;
 }

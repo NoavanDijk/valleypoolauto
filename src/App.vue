@@ -17,13 +17,10 @@
 
       <div id="navbarBasic" class="navbar-menu">
         <div class="navbar-end">
-          <div class="navbar-item">
-            <a href="App.vue" class="navbar-item">
-              Reserve the car
-            </a>
-            <a class="navbar-item">
-              My reservations
-            </a>
+          <div class="navbar-item navitem">
+            <router-link to="/">Home</router-link>
+            <router-link class="routerlink" to="/information">Information</router-link>
+            <router-view/>
           </div>
         </div>
       </div>
@@ -69,7 +66,8 @@
             </tr>
           </thead>
           <tbody v-for="(item, index) in items" v-bind:key="index"  v-bind:class="{'active': activeIndex === index}">
-            <tr v-if="items[activeIndex]" v-show="showReservation[index]">
+            <!-- v-if="items[activeIndex]" v-show="showReservation[index]" -->
+            <tr>
               <td class="tdstartdate">{{item.startTime}}</td>
               <td class="tdenddate">{{item.endTime}}</td>
               <td>Firstname Surname</td>
@@ -83,12 +81,12 @@
                 <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
               </td>
             </tr>
-            <tr>
-              <td >{{item.startTime}}</td>
+            <!-- <tr>
+              <td>{{item.startTime}}</td>
               <td>{{item.endTime}}</td>
               <td>Firstname Surname</td>
-              <td >{{formatDateToString(item.startdate)}}</td>
-              <td >{{formatDateToString(item.enddate)}}</td>
+              <td>{{formatDateToString(item.startdate)}}</td>
+              <td>{{formatDateToString(item.enddate)}}</td>
               <td>{{item.status}}</td>
               <td class="tdbuttons">
                 <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
@@ -96,7 +94,7 @@
               <td class="tdbuttons">
                 <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
               </td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -345,14 +343,16 @@ export default {
   created: function(){
     const self = this;
     let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
-    console.log("created");
     axios.get('/baas/poolcar/reservations', {headers: config})
     .then(response => {
       for(let i = 0; i < response.data.length; i += 1){
         const d = response.data[i];
-       if(d.item){ self.items.push(d.item); }
+       if(d.item){ 
+         const newItem = d.item;
+         newItem.id = d._id;
+         self.items.push(newItem);
+        }
       }
-      console.log(self.items);
     })
     .catch(error => {
       console.log(error)
@@ -450,8 +450,12 @@ export default {
       let currentObj = this;
 
       const data = {item: this.items[this.activeIndex]};
+      const itemIndex = this.activeIndex;
       axios.post('/baas/poolcar/reservation', {
         json: JSON.stringify(data)
+      })
+      .then(response => {
+        this.items[itemIndex].id = response.data._id; 
       })
       .catch(function(error){
         currentObj.output = error;
@@ -483,9 +487,12 @@ export default {
     },
 
     onClickDeleteReservation: function(event){
-      this.items.splice(this.activeIndex, 1);
-      this.activeIndex = this.items.length - 1;
-      this.activeModalId = "";
+      axios.delete('/baas/poolcar/reservation?filter={"_id":"' + this.items[this.activeIndex].id + '"}')
+      .then(response => {
+        this.items.splice(this.activeIndex, 1);
+        this.activeIndex = this.items.length - 1;
+        this.activeModalId = "";
+      })
       return;
     },
 
