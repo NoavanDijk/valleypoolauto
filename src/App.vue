@@ -229,6 +229,7 @@ export default {
       errors: [],
 
       activeIndex: -1,
+      count: 0,
 
       allReservations: true,
 
@@ -441,18 +442,36 @@ export default {
 
       let currentObj = this;
 
-      const data = {item: this.items[this.activeIndex]};
-      const itemIndex = this.activeIndex;
-      axios.post('/baas/poolcar/reservation', {
-        json: JSON.stringify(data)
-      })
-      .then(response => {
-        this.items[itemIndex].id = response.data._id; 
-        console.log(response)
-      })
-      .catch(function(error){
-        currentObj.output = error;
-      });
+      this.count++
+      console.log(this.count);
+      if(this.count > 1){  
+        const data = {item: this.items[this.activeIndex]};
+        const itemIndex = this.activeIndex;
+        axios.post('/baas/poolcar/reservation', {
+          json: JSON.stringify(data)
+        })
+        .then(response => {
+          this.items[itemIndex].id = response.data._id; 
+          console.log(response)
+        })
+        .catch(function(error){
+          currentObj.output = error;
+        });
+      }else{
+        const data = {_id: this.items[this.activeIndex].id, item: this.items[this.activeIndex]};
+        const itemIndex = this.activeIndex;
+        axios.put('/baas/poolcar/reservation', {        
+          filter: JSON.stringify({ "_id" : this.items[this.activeIndex].id }),
+          json: JSON.stringify(data)
+        })
+        .then(response => {
+          console.log(response) 
+        })
+        .catch(function(error){
+          console.log(error)
+          currentObj.output = error;
+        });
+      }
 
       // function compare(a, b){
       //   if(a.startTime < b.startTime)
