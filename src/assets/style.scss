@@ -28,7 +28,7 @@ $size-5: 1.1rem;
   border-radius: 4px;
 }
 
-.router-link-exact-active, .router-link-active, .routerlink{
+.router-link-exact-active, .router-link-active, .routerlink, .routerlink:hover, .router-link-active:hover{
   color: black;
   margin-right: 1em;
 }
@@ -94,6 +94,11 @@ a, a:hover{
 .reservationstable{
   display: flex;
   margin-top: 0.5em;
+  max-height: 240px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-color: #ff0028 #e6e6e6;
+  scrollbar-width: thin;
 }
 
 .editbutton{
@@ -280,6 +285,17 @@ table{
 
   .content{
     min-width: 350px;
+  }
+
+  .reservationstable{
+    display: flex;
+    margin-top: 0.5em;
+    max-height: 550px;
+    scroll-snap-type: y mandatory;
+    // overflow-x: hidden;
+    // overflow-y: auto;
+    // scrollbar-color: #ff0028 #e6e6e6;
+    // scrollbar-width: thin;
   }
 
   .divdeletebutton{

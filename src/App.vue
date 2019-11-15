@@ -65,7 +65,7 @@
               <th></th>
             </tr>
           </thead>
-          <tbody v-for="(item, index) in items" v-bind:key="index"  v-bind:class="{'active': activeIndex === index}">
+          <tbody v-for="(item, index) in items" v-bind:key="index" v-bind:class="{'active': activeIndex === index}">
             <!-- v-if="items[activeIndex]" v-show="showReservation[index]" -->
             <tr>
               <td class="tdstartdate">{{item.startTime}}</td>
@@ -81,20 +81,6 @@
                 <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
               </td>
             </tr>
-            <!-- <tr>
-              <td>{{item.startTime}}</td>
-              <td>{{item.endTime}}</td>
-              <td>Firstname Surname</td>
-              <td>{{formatDateToString(item.startdate)}}</td>
-              <td>{{formatDateToString(item.enddate)}}</td>
-              <td>{{item.status}}</td>
-              <td class="tdbuttons">
-                <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
-              </td>
-              <td class="tdbuttons">
-                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
-              </td>
-            </tr> -->
           </tbody>
         </table>
       </div>
@@ -318,8 +304,6 @@ export default {
                                && this.zipcodedestination.length > 0;
       return !(kmEndIsBiggerThanKmstart && zeroKilometers && zipcodesAreFilledIn);
     },
-
-
   },
 
   watch: {
@@ -351,6 +335,12 @@ export default {
          const newItem = d.item;
          newItem.id = d._id;
          self.items.push(newItem);
+        
+      this.approvedOrNot.push(false);
+      this.approvedOrNotMileage.push(true);
+      this.showMakeReservationForm.push(true);
+      this.showAddKmAndZipcodesForm.push(false);
+      this.showReservation.push(true);
         }
       }
     })
@@ -441,11 +431,13 @@ export default {
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.activeModalId = "";
 
-      this.items[this.activeIndex].startTime = this.startTime;
-      this.items[this.activeIndex].endTime = this.endTime;
-      this.items[this.activeIndex].startdate = this.startdate;
-      this.items[this.activeIndex].enddate = this.enddate;
-      this.items[this.activeIndex].description = this.description;
+      const el = this.items[this.activeIndex]
+
+      el.startTime = this.startTime;
+      el.endTime = this.endTime;
+      el.startdate = this.startdate;
+      el.enddate = this.enddate;
+      el.description = this.description;
 
       let currentObj = this;
 
@@ -456,28 +448,46 @@ export default {
       })
       .then(response => {
         this.items[itemIndex].id = response.data._id; 
+        console.log(response)
       })
       .catch(function(error){
         currentObj.output = error;
       });
 
-      function compare(a, b){
-        if(a.startTime < b.startTime)
-          return -1;
-        if(a.startTime > b.startTime)
-          return 1;
-        return 0;
-      }return this.items.sort(compare);
+      // function compare(a, b){
+      //   if(a.startTime < b.startTime)
+      //     return -1;
+      //   if(a.startTime > b.startTime)
+      //     return 1;
+      //   return 0;
+      // }return this.items.sort(compare);
     },
 
     onClickSaveButton: function(event){
-      this.items[this.activeIndex].kmstart = this.kmstart;
-      this.items[this.activeIndex].kmend = this.kmend;
-      this.items[this.activeIndex].zipcodedeparture = this.zipcodedeparture;
-      this.items[this.activeIndex].zipcodedestination = this.zipcodedestination;
+      const el = this.items[this.activeIndex];
 
-      this.items[this.activeIndex].status = 'Completed';
+      el.kmstart = this.kmstart;
+      el.kmend = this.kmend;
+      el.zipcodedeparture = this.zipcodedeparture;
+      el.zipcodedestination = this.zipcodedestination;
+      el.status = 'Completed';
+
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+
+      let currentObj = this;
+      const data = {_id: this.items[this.activeIndex].id, item: this.items[this.activeIndex]};
+      const itemIndex = this.activeIndex;
+      axios.put('/baas/poolcar/reservation', {        
+        filter: JSON.stringify({ "_id" : this.items[this.activeIndex].id }),
+        json: JSON.stringify(data)
+      })
+      .then(response => {
+        console.log(response) 
+      })
+      .catch(function(error){
+        console.log(error)
+        currentObj.output = error;
+      });
       return;
     },
 
@@ -497,8 +507,11 @@ export default {
     },
 
     onClickTurnDownReservation: function(event){
-      this.items.splice(this.activeIndex, 1);
-      this.activeIndex = this.items.length - 1;
+      axios.delete('/baas/poolcar/reservation?filter={"_id":"' + this.items[this.activeIndex].id + '"}')
+      .then(response => {
+        this.items.splice(this.activeIndex, 1);
+        this.activeIndex = this.items.length - 1;
+      })
       return;
     },
 
