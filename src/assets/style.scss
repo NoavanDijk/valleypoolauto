@@ -95,10 +95,10 @@ a, a:hover{
   display: flex;
   margin-top: 0.5em;
   max-height: 240px;
-  overflow-x: hidden;
   overflow-y: auto;
   scrollbar-color: #ff0028 #e6e6e6;
   scrollbar-width: thin;
+  padding: 2px;
 }
 
 .editbutton{
@@ -149,9 +149,17 @@ a, a:hover{
   width: 35%;
 }
 
-.reservatebutton{
+.reserveandcancelbutton{
   display: flex;
   justify-content: flex-end;
+}
+
+.cancelbutton{
+  margin-top: 1.5em;
+  margin-right: 0.5em;
+}
+
+.reservatebutton{
   margin-top: 1.5em;
 }
 

@@ -75,10 +75,10 @@
               <td class="tdenddate">{{formatDateToString(item.enddate)}}</td>
               <td>{{item.status}}</td>
               <td class="tdbuttons">
-                <button class="button is-text entermileagebutton" :disabled="approvedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
+                <button class="button is-text entermileagebutton" :disabled="checkStatusApprovedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
               </td>
               <td class="tdbuttons">
-                <button class="button editbutton" :disabled="approvedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
+                <button class="button editbutton" :disabled="checkStatusApprovedOrNot[index]" v-on:click="onClickEditReservationForm(index)"><a class="aedit" href="#section1"><i class="fas fa-edit"></i></a></button>
               </td>
             </tr>
           </tbody>
@@ -128,9 +128,16 @@
                   <button class="button deletebutton" type="button" name="button" v-on:click="onClickOpenDeleteWarning"><i class="fas fa-trash"></i></button>
                 </div>
 
-                <div class="reservatebutton">
-                  <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
+                <div class="reserveandcancelbutton">
+                  <div class="cancelbutton">
+                    <button class="button is-text" type="button" name="button" v-on:click="onClickCancelEditReservation">Cancel</button>
+                  </div>
+
+                  <div class="reservatebutton">
+                    <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
+                  </div>
                 </div>
+                
               </div>
 
             </div>
@@ -304,6 +311,33 @@ export default {
                                && this.zipcodedestination.length > 0;
       return !(kmEndIsBiggerThanKmstart && zeroKilometers && zipcodesAreFilledIn);
     },
+
+    checkStatusApprovedOrNot(){
+      const arr = [];
+      console.log("checkStatus");
+      for(var i = 0; i < this.items.length; i++){
+        if(this.items[i].status == "Approved"){
+          console.log("Status is approved");
+          arr.push(true);
+        }else{
+          arr.push(false);
+        }
+      }
+      return arr; 
+    },
+
+    checkStatusApprovedOrNotMileage(){
+      const arr2 = [];
+      for(var i = 0; i < this.items.length; i++){
+      if(this.items[i].status == "Approved"){
+        console.log("Status is approved");
+        arr2.push(false);
+      }else{
+        arr2.push(true);
+      }
+    }
+    return arr2;
+    }
   },
 
   watch: {
@@ -336,8 +370,8 @@ export default {
          newItem.id = d._id;
          self.items.push(newItem);
         
-      this.approvedOrNot.push(false);
-      this.approvedOrNotMileage.push(true);
+      // this.approvedOrNot.push(false);
+      // this.approvedOrNotMileage.push(true);
       this.showMakeReservationForm.push(true);
       this.showAddKmAndZipcodesForm.push(false);
       this.showReservation.push(true);
@@ -413,9 +447,22 @@ export default {
     },
 
     onClickAcceptReservation: function(event){
-      this.items[this.activeIndex].status = 'Approved';
-      this.approvedOrNot.splice(this.activeIndex, 1, true);
-      this.approvedOrNotMileage.splice(this.activeIndex, 1, false);
+      const el = this.items[this.activeIndex];
+      el.status = 'Approved';
+      
+      const data = {_id: this.items[this.activeIndex].id, item: this.items[this.activeIndex]};
+        const itemIndex = this.activeIndex;
+        axios.put('/baas/poolcar/reservation', {        
+          filter: JSON.stringify({ "_id" : this.items[this.activeIndex].id }),
+          json: JSON.stringify(data)
+        })
+        .then(response => {
+          console.log(response) 
+        })
+        .catch(function(error){
+          console.log(error)
+          currentObj.output = error;
+        });
 
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       return;
@@ -438,6 +485,7 @@ export default {
       el.startdate = this.startdate;
       el.enddate = this.enddate;
       el.description = this.description;
+      el.status = this.status;
 
       let currentObj = this;
       
@@ -456,7 +504,7 @@ export default {
           console.log(error)
           currentObj.output = error;
         });
-
+        
       }else{
         const data = {item: this.items[this.activeIndex]};
         axios.post('/baas/poolcar/reservation', {
@@ -474,10 +522,20 @@ export default {
       // function compare(a, b){
       //   if(a.startTime < b.startTime)
       //     return -1;
-      //   if(a.startTime > b.startTime)
+      // if(a.startTime > b.startTime)
       //     return 1;
       //   return 0;
       // }return this.items.sort(compare);
+    },
+
+    onClickCancelEditReservation: function(event){
+      if(this.items[this.activeIndex].id){
+        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      }else{
+        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+        this.items.splice(this.activeIndex, 1);
+        this.activeIndex = this.items.length - 1;
+      }
     },
 
     onClickSaveButton: function(event){
