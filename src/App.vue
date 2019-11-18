@@ -314,10 +314,8 @@ export default {
 
     checkStatusApprovedOrNot(){
       const arr = [];
-      console.log("checkStatus");
       for(var i = 0; i < this.items.length; i++){
         if(this.items[i].status == "Approved"){
-          console.log("Status is approved");
           arr.push(true);
         }else{
           arr.push(false);
@@ -330,7 +328,6 @@ export default {
       const arr2 = [];
       for(var i = 0; i < this.items.length; i++){
       if(this.items[i].status == "Approved"){
-        console.log("Status is approved");
         arr2.push(false);
       }else{
         arr2.push(true);
@@ -415,6 +412,7 @@ export default {
       this.approvedOrNot.push(false);
       this.approvedOrNotMileage.push(true);
       this.showMakeReservationForm.push(true);
+      console.log(this.showMakeReservationForm);
       this.showAddKmAndZipcodesForm.push(false);
 
       this.showReservation.push(true);
@@ -533,7 +531,6 @@ export default {
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       }else{
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-        this.items.splice(this.activeIndex, 1);
         this.activeIndex = this.items.length - 1;
       }
     },
@@ -572,12 +569,18 @@ export default {
     },
 
     onClickDeleteReservation: function(event){
-      axios.delete('/baas/poolcar/reservation?filter={"_id":"' + this.items[this.activeIndex].id + '"}')
+      if(this.items[this.activeIndex].id){
+        axios.delete('/baas/poolcar/reservation?filter={"_id":"' + this.items[this.activeIndex].id + '"}')
       .then(response => {
         this.items.splice(this.activeIndex, 1);
         this.activeIndex = this.items.length - 1;
         this.activeModalId = "";
       })
+      }else{
+        this.items.splice(this.activeIndex, 1);
+        this.activeModalId = "";
+      }
+      
       return;
     },
 
