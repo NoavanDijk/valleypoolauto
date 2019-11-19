@@ -1,6 +1,6 @@
 <template>
   <div class="information">
-    <h1>{{ msg }}</h1>
+    <h1>Hier komt een dashboard met grafieken over de gemaakte kilometers</h1>
   </div>
 </template>
 
@@ -9,7 +9,6 @@
     name: 'Information',
     data () {
       return {
-        msg: 'Welcome to Crypto Info'
       }
     }
   }
