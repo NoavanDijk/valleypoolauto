@@ -9,6 +9,7 @@ $size-5: 1.1rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
 }
 
 .navbar {
@@ -43,7 +44,7 @@ html{
 }
 
 a, a:hover{
-  color: white;
+  // color: white;
 }
 
 .aedit, .aedit:hover, .aentermileage, .aentermileage:hover{
@@ -160,6 +161,8 @@ a, a:hover{
 }
 
 .reservatebutton{
+  display: flex;
+  justify-content: flex-end;
   margin-top: 1.5em;
 }
 

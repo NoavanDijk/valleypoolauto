@@ -3,8 +3,7 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import VueVisible from 'vue-visible'
 import VueApexCharts from 'vue-apexcharts'
-
-import routes from './routes';
+import router from './router'
 
 Vue.component('apexchart', VueApexCharts);
 
@@ -14,12 +13,12 @@ Vue.use(VueVisible);
 
 Vue.config.productionTip = false
 
-const router = new VueRouter({routes});
-
 require("./assets/style.scss");
 
 new Vue({
   router,
+  template: '<App/>',
+  components: { App },
   render: h => h(App)
 }).$mount('#app')
 
