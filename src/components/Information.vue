@@ -12,20 +12,29 @@
   export default {
     name: 'Information',
     data: function() {
-    return {
-      options: {
-        chart: {
-          id: 'vuechart'
+      return {
+        options: {
+          chart: {
+            id: 'vuechart'
+          },
+          xaxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+          },
+          theme: {
+            monochrome: {
+              enabled: true,
+              color: '#ff0028',
+              shadeTo: 'light',
+              shadeIntensity: 0.65
+            }
+          },
         },
-        xaxis: {
-          categories: ['Jan', 'Feb', 'Mar', 'Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        }
-      },
-      series: [{
-        name: 'series-1',
-        data: [30, 15, 45, 50, 29, 60, 40, 91, 20, 50, 30, 80]
-      }]
-    }
+        series: [{
+          name: 'series-1',
+          data: [30, 15, 45, 50, 29, 60, 40, 91, 20, 50, 30, 80]
+        }],
+        
+      }
     }
   }
 </script>
