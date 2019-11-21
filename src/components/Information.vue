@@ -7,7 +7,8 @@
     </div>
 
     <div>
-      <p id="demo">Totaal aantal kilometers: </p>
+      <p><b>Totaal aantal kilometers:</b></p>
+      <p id="demo"></p>
     </div>
   </div>  
 </template>
@@ -21,20 +22,20 @@
           chart: {
             id: 'vuechart'
           },
+
           xaxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
           },
+          
           theme: {
             monochrome: {
               enabled: true,
               color: '#ff0028',
-              shadeTo: 'light',
-              shadeIntensity: 0.65
             }
-          },
+          }
         },
+
         series: [{
-          name: 'series-1',
           data: [30, 15, 45, 50, 29, 60, 40, 91, 20, 50, 30, 80]
         }],
       }
@@ -45,17 +46,25 @@
       let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
       axios.get('/baas/poolcar/reservations', {headers: config})
       .then(response => {
-        const totalkilometersarray = [];
+        const totalkilometersarray = [0,0,0,0,0,0,0,0,0,0,0,0,0];
         for(var i = 0; i < response.data.length; i += 1){
           const d = response.data[i];
-          const totalkilometers = d.item.kmend - d.item.kmstart;
+          const totalkmForItem = d.item.kmend - d.item.kmstart;
+          const monthIndex = new Date(d.item.enddate).getMonth();
 
-          totalkilometersarray.push(totalkilometers);
+          let totalkmForMonth = totalkilometersarray[monthIndex];
+          totalkmForMonth += totalkmForItem;
+          totalkilometersarray[monthIndex] = totalkmForMonth;
         }
-
+         
         function getSum(total, num) {
-          return total + Math.round(num);
+          const allkilometers = total + num;
+          return allkilometers;
         }
+
+        this.series  = [{
+          data: totalkilometersarray
+        }]
 
         document.getElementById("demo").innerHTML = totalkilometersarray.reduce(getSum, 0);
         console.log(response);
@@ -63,6 +72,6 @@
       .catch(error => {
         console.log(error)
       })
-    },
+    }
   }
 </script>

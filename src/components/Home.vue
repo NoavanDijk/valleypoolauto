@@ -112,7 +112,7 @@
                   </div>
 
                   <div class="reservatebutton">
-                    <button class="button is-primary" type="button" name="button" :disabled="reserveButtonIsDisabled" v-on:click="onClickConfirmEditReservation">Reserve</button>
+                    <button class="button is-primary" type="button" name="button"  v-on:click="onClickConfirmEditReservation">Reserve</button>
                   </div>
                 </div>
                 
@@ -346,8 +346,6 @@ export default {
          newItem.id = d._id;
          self.items.push(newItem);
         
-      // this.approvedOrNot.push(false);
-      // this.approvedOrNotMileage.push(true);
       this.showMakeReservationForm.push(true);
       this.showAddKmAndZipcodesForm.push(false);
       this.showReservation.push(true);
