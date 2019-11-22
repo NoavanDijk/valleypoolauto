@@ -26,14 +26,14 @@
 
 <!-- Table with all the reservations -->
       <div class="reservationstable">
-        <table class="table" v-visible="allReservations">
+        <table class="ea_table" v-visible="allReservations">
           <thead>
             <tr>
-              <th>Starttime</th>
-              <th>Endtime</th>
-              <th>Name</th>
               <th>Startdate</th>
               <th>Enddate</th>
+              <th>Starttime</th>
+              <th>Endtime</th>
+              <th>Name</th>              
               <th>Status</th>
               <th></th>
               <th></th>
@@ -42,11 +42,11 @@
           <tbody v-for="(item, index) in items" v-bind:key="index" v-bind:class="{'active': activeIndex === index}">
             <!-- v-if="items[activeIndex]" v-show="showReservation[index]" -->
             <tr v-show="showReservation[index]">
-              <td class="tdstartdate">{{item.startTime}}</td>
-              <td class="tdenddate">{{item.endTime}}</td>
-              <td>Firstname Surname</td>
               <td class="tdstartdate">{{formatDateToString(item.startdate)}}</td>
               <td class="tdenddate">{{formatDateToString(item.enddate)}}</td>
+              <td class="tdstartdate">{{item.startTime}}</td>
+              <td class="tdenddate">{{item.endTime}}</td>
+              <td>Firstname Surname</td>              
               <td>{{item.status}}</td>
               <td class="tdbuttons">
                 <button class="button is-text entermileagebutton" :disabled="checkStatusApprovedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
@@ -306,12 +306,12 @@ export default {
     checkStatusApprovedOrNotMileage(){
       const arr2 = [];
       for(var i = 0; i < this.items.length; i++){
-      if(this.items[i].status == "Approved"){
-        arr2.push(false);
-      }else{
-        arr2.push(true);
+        if(this.items[i].status == "Approved"){
+          arr2.push(false);
+        }else{
+          arr2.push(true);
+        }
       }
-    }
     return arr2;
     }
   },
@@ -320,16 +320,18 @@ export default {
     activeIndex(){
   // if activeindex is valid, do the below
       if(this.items[this.activeIndex]){
-        this.startTime = this.items[this.activeIndex].startTime;
-        this.endTime = this.items[this.activeIndex].endTime;
-        this.startdate = this.items[this.activeIndex].startdate;
-        this.enddate = this.items[this.activeIndex].enddate;
+        const el = this.items[this.activeIndex];
+        this.startTime = el.startTime;
+        this.endTime = el.endTime;
+        this.startdate = el.startdate;
+        this.enddate = el.enddate;
 
-        this.kmstart = this.items[this.activeIndex].kmstart;
-        this.kmend = this.items[this.activeIndex].kmend;
-        this.zipcodedeparture = this.items[this.activeIndex].zipcodedeparture;
-        this.zipcodedestination = this.items[this.activeIndex].zipcodedestination;
-        this.description = this.items[this.activeIndex].description;
+        this.kmstart = el.kmstart;
+        this.kmend = el.kmend;
+        this.zipcodedeparture = el.zipcodedeparture;
+        this.zipcodedestination = el.zipcodedestination;
+        this.description = el.description;
+        this.status = el.status;
       }
     }
   },
@@ -342,13 +344,13 @@ export default {
       for(let i = 0; i < response.data.length; i += 1){
         const d = response.data[i];
        if(d.item){ 
-         const newItem = d.item;
-         newItem.id = d._id;
-         self.items.push(newItem);
+        const newItem = d.item;
+        newItem.id = d._id;
+        self.items.push(newItem);
         
-      this.showMakeReservationForm.push(true);
-      this.showAddKmAndZipcodesForm.push(false);
-      this.showReservation.push(true);
+        this.showMakeReservationForm.push(true);
+        this.showAddKmAndZipcodesForm.push(false);
+        this.showReservation.push(true);
         }
       }
     })
@@ -553,7 +555,6 @@ export default {
         this.items.splice(this.activeIndex, 1);
         this.activeModalId = "";
       }
-      
       return;
     },
 

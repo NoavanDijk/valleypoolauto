@@ -1,9 +1,9 @@
 <template>
   <div id="information">
-    <h1>Hier komt een dashboard met grafieken over de gemaakte kilometers</h1>
+    <h1><b>Gemaakte kilometers per maand:</b></h1>
 
     <div>
-      <apexchart width="660" type="bar" :options="options" :series="series"></apexchart>
+      <apexchart width="670" type="bar" :options="options" :series="series"></apexchart>
     </div>
 
     <div>
@@ -36,7 +36,8 @@
         },
 
         series: [{
-          data: [30, 15, 45, 50, 29, 60, 40, 91, 20, 50, 30, 80]
+          name: 'Aantal kilometers',
+          data: [0,0,0,0,0,0,0,0,0,0,0,0]
         }],
       }
     },
@@ -46,7 +47,7 @@
       let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
       axios.get('/baas/poolcar/reservations', {headers: config})
       .then(response => {
-        const totalkilometersarray = [0,0,0,0,0,0,0,0,0,0,0,0,0];
+        const totalkilometersarray = [0,0,0,0,0,0,0,0,0,0,0,0];
         for(var i = 0; i < response.data.length; i += 1){
           const d = response.data[i];
           const totalkmForItem = d.item.kmend - d.item.kmstart;

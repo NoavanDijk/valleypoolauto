@@ -103,13 +103,18 @@ a, a:hover{
 
 // Reservationstable
 .reservationstable{
-  display: flex;
-  margin-top: 0.5em;
-  max-height: 240px;
+  margin-top: 0.8em;
   overflow-y: auto;
   scrollbar-color: #ff0028 #e6e6e6;
   scrollbar-width: thin;
-  padding: 2px;
+  height: 240px;
+}
+
+.reservationstable thead th{ 
+  position: sticky; 
+  top: 0;
+  background-color: white;
+  z-index: 5;
 }
 
 .editbutton{
@@ -230,7 +235,7 @@ table{
   only screen
   and (max-width: 760px), (min-device-width: 768px)
   and (max-device-width: 1024px)  {
-
+  
   // Table
 	table, thead, tbody, th, td, tr {
 		display: block;
@@ -290,12 +295,12 @@ table{
     width: 81%;
   }
 
-	// Label the data
-	td:nth-of-type(1):before { content: "Starttime"; }
-	td:nth-of-type(2):before { content: "Endtime"; }
-	td:nth-of-type(3):before { content: "Name"; }
-	td:nth-of-type(4):before { content: "Startdate"; }
-	td:nth-of-type(5):before { content: "Enddate"; }
+  // Label the data
+  td:nth-of-type(1):before { content: "Startdate"; }
+	td:nth-of-type(2):before { content: "Enddate"; }
+	td:nth-of-type(3):before { content: "Starttime"; }
+	td:nth-of-type(4):before { content: "Endtime"; }
+	td:nth-of-type(5):before { content: "Name"; }	
 	td:nth-of-type(6):before { content: "Status"; }
 	td:nth-of-type(7):before { content: ""; }
 	td:nth-of-type(8):before { content: ""; }
@@ -313,10 +318,6 @@ table{
     margin-top: 0.5em;
     max-height: 550px;
     scroll-snap-type: y mandatory;
-    // overflow-x: hidden;
-    // overflow-y: auto;
-    // scrollbar-color: #ff0028 #e6e6e6;
-    // scrollbar-width: thin;
   }
 
   .divdeletebutton{
