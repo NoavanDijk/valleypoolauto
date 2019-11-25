@@ -347,10 +347,20 @@ export default {
         const newItem = d.item;
         newItem.id = d._id;
         self.items.push(newItem);
+
+        var currentDate = new Date();
+        var convertedcurrentdate = moment(this.formatDateToString(currentDate), "D/M/YYYY").unix();
+        var str2 = moment(this.formatDateToString(d.item.enddate), "D/M/YYYY").unix();
+
+        if(str2 < convertedcurrentdate){
+          this.showReservation.push(false);
+        }else{
+          this.showReservation.push(true);
+        }
         
         this.showMakeReservationForm.push(true);
         this.showAddKmAndZipcodesForm.push(false);
-        this.showReservation.push(true);
+        
         }
       }
     })
@@ -599,7 +609,7 @@ export default {
     },
 
     onClickClearSortedArray: function(){
-      for(var i = 0; i< this.items.length; i++){
+      for(var i = 0; i < this.items.length; i++){
         this.showReservation.splice(i, 1, true);
         this.sortDate = '';
       }

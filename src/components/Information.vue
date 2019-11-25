@@ -10,7 +10,6 @@
       <p><b>Totaal aantal kilometers:</b></p>
       <p id="demo"></p>
     </div>
-    
   </div>  
 </template>
 
