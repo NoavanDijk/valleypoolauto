@@ -3,13 +3,14 @@
     <h1><b>Gemaakte kilometers per maand:</b></h1>
 
     <div>
-      <apexchart width="670" type="bar" :options="options" :series="series"></apexchart>
+      <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
     </div>
 
     <div>
       <p><b>Totaal aantal kilometers:</b></p>
       <p id="demo"></p>
     </div>
+    
   </div>  
 </template>
 
@@ -18,6 +19,8 @@
     name: 'Information',
     data: function() {
       return {
+        windowWidth: 670,
+
         options: {
           chart: {
             id: 'vuechart'
@@ -73,6 +76,22 @@
       .catch(error => {
         console.log(error)
       })
+    },
+
+    mounted: function(){
+      this.$nextTick(function() {
+        window.addEventListener('resize', this.getWindowWidth);
+      })
+    },
+
+    methods: {
+      getWindowWidth(event) {
+        this.windowWidth = document.documentElement.clientWidth;
+      },
+
+      beforeDestroy() {
+        window.removeEventListener('resize', this.getWindowWidth);
+      }
     }
   }
 </script>
