@@ -29,13 +29,13 @@ $size-5: 1.1rem;
   border-radius: 4px;
 }
 
-.navlink{
+.navlink, .navlink2{
   color: black;
   margin-right: 1em;
   outline: none;
 }
 
-.navlink:hover{
+.navlink:hover, .navlink2:hover{
   text-decoration: 2px underline #ff0028;
   color: black
 }
@@ -236,6 +236,16 @@ table{
   and (max-width: 760px), (min-device-width: 768px)
   and (max-device-width: 1024px)  {
   
+  // Navbar
+  .navitem{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .navlink2{
+    margin-top: 1em;
+  }
+
   // Table
 	table, thead, tbody, th, td, tr {
 		display: block;
@@ -318,23 +328,23 @@ table{
     margin-top: 0.5em;
     max-height: 550px;
     scroll-snap-type: y mandatory;
+    margin-bottom: 1em;
   }
 
   .divdeletebutton{
     justify-content: flex-start;
+    margin-top: 8%;
   }
 
   .reservatebutton{
     display: inline-flex;
     justify-content: flex-end;
     width: 100%;
-    margin-top: 0.6em;
   }
 
   .deleteandreservebutton{
     display: flex;
     justify-content: space-between;
-    margin-top: 1em;
   }
 
   .headerdatebutton{
