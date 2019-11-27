@@ -200,7 +200,6 @@
 
     <button class="button is-primary" type="button" name="button" v-on:click="onClickAcceptReservation">Accept</button>
     <button class="button is-secondary" type="button" name="button" v-on:click="onClickTurnDownReservation">Turn down</button>
-    <button class="button is-primary" type="button" name="button" v-on:click="sortReservations">Sort reservations</button>
     
 
   </div>
@@ -216,7 +215,7 @@ export default {
       activeIndex: -1,
       d: {},
       response: {},
-      id: [],
+      listOfItems: [],
 
       allReservations: true,
 
@@ -293,7 +292,6 @@ export default {
       const self = this;
 
       for(var i = 0; i < this.items.length; i++){
-        console.log(this.items);
         if(this.items[i].status == "Approved"){
           arr.push(true);
         }
@@ -355,10 +353,12 @@ export default {
         newItem.id = d._id;
         self.items.push(newItem);
         }
-        this.id = self.items[i].id;
       }
       
       self.items = self.items.sort(this.compare); 
+      this.listOfItems = self.items;
+      console.log(self.items);
+      console.log(this.listOfItems);
       
       for(let i = 0; i < self.items.length; i++){
         var currentDate = new Date();
@@ -393,7 +393,6 @@ export default {
       }          
       if(a.startdate > b.startdate){
         return 1;
-        
       }else{
         return 0;
       }
@@ -405,7 +404,6 @@ export default {
       }          
       if(a.startTime > b.startTime){
         return 1;
-        
       }else{
         return 0;
       }
@@ -497,11 +495,7 @@ export default {
       return;
     },
 
-    onClickContinueButton: function(event){
-      this.onClickEditReservation(this.items.length -1);
-      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-      this.activeModalId = "";
-      
+    onClickContinueButton: function(event){ 
       const el = this.items[this.activeIndex];
 
       el.startTime = this.startTime;
@@ -512,6 +506,11 @@ export default {
       el.status = this.status;
 
       let currentObj = this;
+      
+
+      this.onClickEditReservation(this.items.length -1);
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      this.activeModalId = "";
       
       const itemIndex = this.activeIndex;
       if(this.items[itemIndex].id){
@@ -541,14 +540,9 @@ export default {
           console.log(error);
         });
       }
-    
-      // function compare(a, b){
-      //   if(a.startTime < b.startTime)
-      //     return -1;
-      // if(a.startTime > b.startTime)
-      //     return 1;
-      //   return 0;
-      // }return this.items.sort(compare);
+
+      const self = this;
+      self.items.sort(this.compare); 
     },
 
     onClickCancelEditReservation: function(event){
@@ -654,36 +648,6 @@ export default {
       }
       return;
     },
-
-    sortReservations: function(){
-      for(var i = 0; i < this.items.length; i++){
-        function compare(a, b){
-        if(a.startdate < b.startdate){
-          return -1;
-        }          
-        if(a.startdate > b.startdate){
-          return 1;
-          
-        }else{
-          return 0;
-        }
-          // Als er meer dan 2 reserveringen zijn met dezelfde datum, dan moet je het sorteren op tijd.
-        }
-      return this.items.sort(compare);
-
-      // function compare2(a, b){
-      //     console.log(a.startTime);
-      //     console.log(b.startTime);
-      //     if(a.startTime < b.startTime)          
-      //       return -1;
-      //     if(a.startTime > b.startTime)
-      //       return 1;
-      //     return 0;
-      //   }
-      // return this.items.sort(compare2);
-      }
-      
-    }
   }
 }
 </script>
