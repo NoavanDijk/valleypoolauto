@@ -214,6 +214,8 @@ export default {
   data() {
     return {
       activeIndex: -1,
+      d: {},
+      response: {},
 
       allReservations: true,
 
@@ -289,17 +291,20 @@ export default {
 
     checkStatusApprovedOrNot(){
       const arr = [];
-      for(var i = 0; i < this.items.length; i++){
-        if(this.items[i].status == "Approved"){
+      const obj = {};
+      const self = this;
+      for(var i = 0; i < this.showReservation.length; i++){
+        if(self.items[i].status == "Approved"){
           arr.push(true);
         }
-        if(this.items[i].status == "Completed"){
+        if(self.items[i].status == "Completed"){
           arr.push(true);
         }
         else{
           arr.push(false);
         }
       }
+      console.log(arr);
       return arr; 
     },
 
@@ -341,16 +346,26 @@ export default {
     let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
     axios.get('/baas/poolcar/reservations', {headers: config})
     .then(response => {
+      this.response = response;
       for(let i = 0; i < response.data.length; i += 1){
         const d = response.data[i];
+        this.d = d;
        if(d.item){ 
         const newItem = d.item;
         newItem.id = d._id;
         self.items.push(newItem);
+        // console.log(self.items);
+        }
+       
+      }
+      // niet op index doen, maar op id
+      self.items = self.items.sort(this.compare); 
+      
+      for(let i = 0; i < self.items.length; i++){
 
         var currentDate = new Date();
         var convertedcurrentdate = moment(this.formatDateToString(currentDate), "D/M/YYYY").unix();
-        var str2 = moment(this.formatDateToString(d.item.enddate), "D/M/YYYY").unix();
+        var str2 = moment(this.formatDateToString(self.items[i].enddate), "D/M/YYYY").unix();
 
         if(str2 < convertedcurrentdate){
           this.showReservation.push(false);
@@ -361,8 +376,12 @@ export default {
         this.showMakeReservationForm.push(true);
         this.showAddKmAndZipcodesForm.push(false);
         
-        }
+        // if(er meer dan twee dezelfde startdatums zijn)
+        // { Doe dan 
+        //    self.items = self.items.sort(this.compare2); 
+        // }
       }
+      
     })
     .catch(error => {
       console.log(error)
@@ -370,6 +389,35 @@ export default {
   },
 
   methods: {
+    compare: function(a, b){
+      // console.log(a.startdate);
+      // console.log(b.startdate);
+      if(a.startdate < b.startdate){
+        // console.log("-1");
+        return -1;
+      }          
+      if(a.startdate > b.startdate){
+        // console.log("1");
+        return 1;
+        
+      }else{
+        // console.log("0");
+        return 0;
+      }
+    },
+
+    compare2: function(a, b){
+      if(a.startTime < b.startTime){
+        return -1;
+      }          
+      if(a.startTime > b.startTime){
+        return 1;
+        
+      }else{
+        return 0;
+      }
+    },
+
     formatDateToString: function(date){
       var d = new Date(date);
       var retVal;
