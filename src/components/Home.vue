@@ -213,9 +213,6 @@ export default {
   data() {
     return {
       activeIndex: -1,
-      d: {},
-      response: {},
-      listOfItems: [],
 
       allReservations: true,
 
@@ -343,10 +340,8 @@ export default {
     let config = {'Authorization': 'f35da560-8a5e-4db9-976d-973117b682f6'};
     axios.get('/baas/poolcar/reservations', {headers: config})
     .then(response => {
-      this.response = response;
       for(let i = 0; i < response.data.length; i += 1){
         const d = response.data[i];
-        this.d = d;
        if(d.item){ 
         const newItem = d.item;
         
@@ -356,9 +351,6 @@ export default {
       }
       
       self.items = self.items.sort(this.compare); 
-      this.listOfItems = self.items;
-      console.log(self.items);
-      console.log(this.listOfItems);
       
       for(let i = 0; i < self.items.length; i++){
         var currentDate = new Date();
@@ -617,16 +609,10 @@ export default {
           this.showReservation.splice(i, 1, true);
           const el = this.items[this.activeIndex];
         }
-        // if((this.items[i].startdate == this.sortDate )= 0){
-        //   this.noReservations = true;
-        // }
         else{
           this.showReservation.splice(i, 1, false);
         }
-        // if (0 in die lijst startdate == sortDate hebben){
-        // this.noReservations = true;
       }
-
       
       // time
       //   function compare(a, b){
@@ -645,6 +631,16 @@ export default {
       for(var i = 0; i < this.items.length; i++){
         this.showReservation.splice(i, 1, true);
         this.sortDate = '';
+        var currentDate = new Date();
+        const self = this;
+        var convertedcurrentdate = moment(this.formatDateToString(currentDate), "D/M/YYYY").unix();
+        var str2 = moment(this.formatDateToString(self.items[i].enddate), "D/M/YYYY").unix();
+
+        if(str2 < convertedcurrentdate){
+          this.showReservation.splice(i, 1, false);
+        }else{
+          this.showReservation.splice(i, 1, true);
+        }
       }
       return;
     },
