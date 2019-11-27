@@ -216,6 +216,7 @@ export default {
       activeIndex: -1,
       d: {},
       response: {},
+      id: [],
 
       allReservations: true,
 
@@ -223,8 +224,6 @@ export default {
       sortDate: '',
       noReservations: false,
 
-      approvedOrNot: [],
-      approvedOrNotMileage: [],
       showMakeReservationForm: [],
       showAddKmAndZipcodesForm: [],
 
@@ -291,20 +290,20 @@ export default {
 
     checkStatusApprovedOrNot(){
       const arr = [];
-      const obj = {};
       const self = this;
-      for(var i = 0; i < this.showReservation.length; i++){
-        if(self.items[i].status == "Approved"){
+
+      for(var i = 0; i < this.items.length; i++){
+        console.log(this.items);
+        if(this.items[i].status == "Approved"){
           arr.push(true);
         }
-        if(self.items[i].status == "Completed"){
+        if(this.items[i].status == "Completed"){
           arr.push(true);
         }
-        else{
+        if(this.items[i].status == "In progress"){
           arr.push(false);
         }
       }
-      console.log(arr);
       return arr; 
     },
 
@@ -352,17 +351,16 @@ export default {
         this.d = d;
        if(d.item){ 
         const newItem = d.item;
+        
         newItem.id = d._id;
         self.items.push(newItem);
-        // console.log(self.items);
         }
-       
+        this.id = self.items[i].id;
       }
-      // niet op index doen, maar op id
+      
       self.items = self.items.sort(this.compare); 
       
       for(let i = 0; i < self.items.length; i++){
-
         var currentDate = new Date();
         var convertedcurrentdate = moment(this.formatDateToString(currentDate), "D/M/YYYY").unix();
         var str2 = moment(this.formatDateToString(self.items[i].enddate), "D/M/YYYY").unix();
@@ -390,18 +388,13 @@ export default {
 
   methods: {
     compare: function(a, b){
-      // console.log(a.startdate);
-      // console.log(b.startdate);
       if(a.startdate < b.startdate){
-        // console.log("-1");
         return -1;
       }          
       if(a.startdate > b.startdate){
-        // console.log("1");
         return 1;
         
       }else{
-        // console.log("0");
         return 0;
       }
     },
@@ -446,8 +439,6 @@ export default {
         status: this.status,
       });
 
-      this.approvedOrNot.push(false);
-      this.approvedOrNotMileage.push(true);
       this.showMakeReservationForm.push(true);
       this.showAddKmAndZipcodesForm.push(false);
 
@@ -510,7 +501,7 @@ export default {
       this.onClickEditReservation(this.items.length -1);
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.activeModalId = "";
-
+      
       const el = this.items[this.activeIndex];
 
       el.startTime = this.startTime;
