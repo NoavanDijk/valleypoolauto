@@ -366,10 +366,7 @@ export default {
         this.showMakeReservationForm.push(true);
         this.showAddKmAndZipcodesForm.push(false);
         
-        // if(er meer dan twee dezelfde startdatums zijn)
-        // { Doe dan 
-        //    self.items = self.items.sort(this.compare2); 
-        // }
+        self.items = self.items.sort(this.compare2);
       }
       
     })
@@ -391,13 +388,15 @@ export default {
     },
 
     compare2: function(a, b){
-      if(a.startTime < b.startTime){
-        return -1;
-      }          
-      if(a.startTime > b.startTime){
-        return 1;
-      }else{
-        return 0;
+      if(a.startdate == b.startdate){
+        if(a.startTime < b.startTime){
+          return -1;
+        }          
+        if(a.startTime > b.startTime){
+          return 1;
+        }else{
+          return 0;
+        }
       }
     },
 
@@ -535,6 +534,7 @@ export default {
 
       const self = this;
       self.items.sort(this.compare); 
+      self.items.sort(this.compare2);
     },
 
     onClickCancelEditReservation: function(event){
@@ -613,7 +613,9 @@ export default {
           this.showReservation.splice(i, 1, false);
         }
       }
-      
+      const self = this;
+      self.items.sort(this.compare2);
+
       // time
       //   function compare(a, b){
       //     console.log(a.startTime);
