@@ -44,12 +44,12 @@
             </div>
           <tbody v-for="(item, index) in items" v-bind:key="index" v-bind:class="{'active': activeIndex === index}">
             <tr v-show="showReservation[index]">
-              <td class="tdstartdate">{{formatDateToString(item.startdate)}}</td>
-              <td class="tdenddate">{{formatDateToString(item.enddate)}}</td>
-              <td class="tdstartdate">{{item.startTime}}</td>
-              <td class="tdenddate">{{item.endTime}}</td>
-              <td>Firstname Surname</td>              
-              <td>{{item.status}}</td>
+              <td v-on:click="openReservation(index)" class="tdstartdate">{{formatDateToString(item.startdate)}}</td>
+              <td v-on:click="openReservation(index)" class="tdenddate">{{formatDateToString(item.enddate)}}</td>
+              <td v-on:click="openReservation(index)" class="tdstartdate">{{item.startTime}}</td>
+              <td v-on:click="openReservation(index)" class="tdenddate">{{item.endTime}}</td>
+              <td v-on:click="openReservation(index)" >Firstname Surname</td>              
+              <td v-on:click="openReservation(index)">{{item.status}}</td>
               <td class="tdbuttons">
                 <button class="button is-text entermileagebutton" :disabled="checkStatusApprovedOrNotMileage[index]" v-on:click="onClickFillInInformationForm(index)"><a class="aentermileage" href="#section2">Enter mileage</a></button>
               </td>
@@ -375,6 +375,12 @@ export default {
   },
 
   methods: {
+    openReservation: function(index){
+      this.activeIndex = index;
+      this.showMakeReservationForm.splice(this.activeIndex, 1, true);
+      return;
+    },
+
     compare: function(a, b){
       if(a.startdate < b.startdate){
         return -1;
@@ -536,6 +542,7 @@ export default {
       const self = this;
       self.items.sort(this.compare); 
       self.items.sort(this.compare2);
+      return;
     },
 
     onClickCancelEditReservation: function(event){
@@ -546,6 +553,7 @@ export default {
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
         this.activeIndex = this.items.length - 1;
       }
+      return;
     },
 
     onClickSaveButton: function(event){
