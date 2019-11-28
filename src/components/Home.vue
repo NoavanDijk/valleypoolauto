@@ -196,8 +196,8 @@
       </div>
     </div>
 
-    <button class="button is-primary" type="button" name="button" v-on:click="onClickAcceptReservation">Accept</button>
-    <button class="button is-secondary" type="button" name="button" v-on:click="onClickTurnDownReservation">Turn down</button>
+    <button class="button is-primary" type="button" name="button" :disabled="disableAcceptAndTurnDownButton" v-on:click="onClickAcceptReservation">Accept</button>
+    <button class="button is-secondary" type="button" name="button" :disabled="disableAcceptAndTurnDownButton" v-on:click="onClickTurnDownReservation">Turn down</button>
     
 
   </div>
@@ -213,6 +213,7 @@ export default {
       activeIndex: -1,
 
       allReservations: true,
+      disableAcceptAndTurnDownButton: true,
 
       showReservation: [],
       sortDate: '',
@@ -310,7 +311,7 @@ export default {
         }
       }
     return arr2;
-    }
+    },
   },
 
   watch: {
@@ -451,6 +452,7 @@ export default {
       this.activeIndex = index;
       this.showMakeReservationForm.splice(this.activeIndex, 1, true);
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = false;
       return;
     },
 
@@ -477,6 +479,7 @@ export default {
         });
 
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = true;
       return;
     },
 
@@ -497,7 +500,6 @@ export default {
 
       let currentObj = this;
       
-
       this.onClickEditReservation(this.items.length -1);
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.activeModalId = "";
@@ -537,6 +539,7 @@ export default {
     },
 
     onClickCancelEditReservation: function(event){
+      this.disableAcceptAndTurnDownButton = true;
       if(this.items[this.activeIndex].id){
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       }else{
@@ -584,6 +587,7 @@ export default {
         this.items.splice(this.activeIndex, 1);
         this.activeIndex = this.items.length - 1;
         this.activeModalId = "";
+        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       })
       }else{
         this.items.splice(this.activeIndex, 1);
@@ -597,6 +601,7 @@ export default {
       .then(response => {
         this.items.splice(this.activeIndex, 1);
         this.activeIndex = this.items.length - 1;
+        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       })
       return;
     },
