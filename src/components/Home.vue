@@ -26,7 +26,7 @@
 
 <!-- Table with all the reservations -->
       <div class="reservationstable">
-        <table class="ea_table" v-visible="allReservations">
+        <table class="ea_table" v-show="allReservations">
           <thead>
             <tr>
               <th>Startdate</th>
@@ -39,8 +39,10 @@
               <th></th>
             </tr>
           </thead>
+            <div class="noreservations" v-show="noReservations">
+              <p><i>There are no reservations on this day yet.</i></p>
+            </div>
           <tbody v-for="(item, index) in items" v-bind:key="index" v-bind:class="{'active': activeIndex === index}">
-            <!-- v-if="items[activeIndex]" v-show="showReservation[index]" -->
             <tr v-show="showReservation[index]">
               <td class="tdstartdate">{{formatDateToString(item.startdate)}}</td>
               <td class="tdenddate">{{formatDateToString(item.enddate)}}</td>
@@ -59,9 +61,7 @@
         </table>
       </div>
 
-      <div class="noreservations" v-show="noReservations">
-        <p>Op deze dag zijn er nog geen reserveringen</p>
-      </div>
+    
 
 <!-- Form to make a reservation -->
       <div id="section1" class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeReservationForm[activeIndex]">
@@ -433,6 +433,7 @@ export default {
 
       this.showReservation.push(true);
       this.onClickEditReservation(this.items.length -1);
+      this.noReservations = false;
       return;
     },
 
@@ -603,36 +604,41 @@ export default {
     },
 
     onClickSortedArray: function(){
-      // date
+      // Date
+      const checksortdatearray = [];
       for(var i = 0; i < this.items.length; i++){
+        const checksortdate = this.items[i].startdate == this.sortDate;        
+        checksortdatearray.push(checksortdate);
+
         if(this.items[i].startdate == this.sortDate){
           this.showReservation.splice(i, 1, true);
           const el = this.items[this.activeIndex];
-        }
-        else{
+        }else{
           this.showReservation.splice(i, 1, false);
         }
       }
+
+      var found = checksortdatearray.find(function(element) { 
+        return element !== false;
+      }); 
+
+      if(found === undefined){
+        this.noReservations = true;
+      }else{
+        this.noReservations = false;
+      }
+
+      // Time
       const self = this;
       self.items.sort(this.compare2);
-
-      // time
-      //   function compare(a, b){
-      //     console.log(a.startTime);
-      //     console.log(b.startTime);
-      //     if(a.startTime < b.startTime)          
-      //       return -1;
-      //     if(a.startTime > b.startTime)
-      //       return 1;
-      //     return 0;
-      //   }
-      // return this.items.sort(compare);
     },
 
     onClickClearSortedArray: function(){
       for(var i = 0; i < this.items.length; i++){
         this.showReservation.splice(i, 1, true);
         this.sortDate = '';
+        this.noReservations = false;
+
         var currentDate = new Date();
         const self = this;
         var convertedcurrentdate = moment(this.formatDateToString(currentDate), "D/M/YYYY").unix();
