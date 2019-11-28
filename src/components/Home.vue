@@ -61,8 +61,6 @@
         </table>
       </div>
 
-    
-
 <!-- Form to make a reservation -->
       <div id="section1" class="formmakereservation" v-if="items[activeIndex]" v-show="showMakeReservationForm[activeIndex]">
         <div class="tile is-ancestor">
