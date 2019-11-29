@@ -106,7 +106,7 @@
 
                 <div class="reserveandcancelbutton">
                   <div class="cancelbutton">
-                    <button class="button is-text" type="button" name="button" v-on:click="onClickCancelEditReservation">Cancel</button>
+                    <button class="button is-text" type="button" name="button" v-on:click="onClickCancel">Cancel</button>
                   </div>
 
                   <div class="reservatebutton">
@@ -115,7 +115,54 @@
                 </div>
                 
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div class="formmakereservation" v-if="items[activeIndex]" v-show="showReservationForm[activeIndex]">
+        <div class="tile is-ancestor">
+          <div class="tile is-parent tilereservationform">
+            <div class="tile is-child box">
+              <div class="makereservationwithdelete">
+                <form class="showreservationform" action="">
+                  <div class="field dates">
+                    <div class="startdate">
+                      <label class="label">Startdate</label>
+                      <input class="input" type="date" v-model="startdate" readonly>
+                    </div>
+
+                    <div class="enddate">
+                      <label class="label">Enddate</label>
+                      <input class="input" type="date" v-model="enddate" readonly>
+                    </div>
+                  </div>
+
+                  <div class="field time">
+                    <div class="starttime">
+                      <label class="label">Starttime</label>
+                      <input class="input" type="time" v-model="startTime" readonly>
+                    </div>
+
+                    <div class="endtime">
+                      <label class="label">Endtime</label>
+                      <input class="input" type="time" v-model="endTime" readonly>
+                    </div>
+                  </div>
+
+                  <div class="field description">
+                    <label class="label">Description/Client</label>
+                    <textarea class="textarea" v-model="description" readonly></textarea>
+                  </div>
+                </form>
+              </div>
+
+              <div class="deleteandreservebutton">
+                <div class="reservatebutton">
+                  <button class="button is-text" type="button" name="button"  v-on:click="onClickCancel">Close</button>
+                </div>
+              </div>
+                
             </div>
           </div>
         </div>
@@ -169,7 +216,7 @@
           <button class="delete" aria-label="close" v-on:click="onClickCloseModal"></button>
         </header>
         <section class="modal-card-body">
-          <p>Don't forget your mileage! These must be entered in <b>My reservations</b> after your ride.</p>
+          <p>Don't forget your mileage! These must be entered by <b>Enter mileage</b> after your ride.</p>
         </section>
         <footer class="modal-card-foot warningbuttons">
             <button class="button" v-on:click="onClickCloseModal">Cancel</button>
@@ -220,6 +267,7 @@ export default {
       noReservations: false,
 
       showMakeReservationForm: [],
+      showReservationForm: [],
       showAddKmAndZipcodesForm: [],
 
       // Editable Reserve Object
@@ -363,6 +411,7 @@ export default {
         }
         
         this.showMakeReservationForm.push(true);
+        this.showReservationForm.push(true);
         this.showAddKmAndZipcodesForm.push(false);
         
         self.items = self.items.sort(this.compare2);
@@ -377,7 +426,24 @@ export default {
   methods: {
     openReservation: function(index){
       this.activeIndex = index;
+      this.showReservationForm.splice(this.activeIndex, 1, true);
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = false;
+      return;
+    },
+
+    onClickEditReservation: function(index){
+      this.activeIndex = index;
+      return;
+    },
+
+    onClickEditReservationForm: function(index){
+      this.activeIndex = index;
       this.showMakeReservationForm.splice(this.activeIndex, 1, true);
+      this.showReservationForm.splice(this.activeIndex, 1, false);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = false;
       return;
     },
 
@@ -435,6 +501,7 @@ export default {
 
       this.showMakeReservationForm.push(true);
       this.showAddKmAndZipcodesForm.push(false);
+      this.showReservationForm.push(false);
 
       this.showReservation.push(true);
       this.onClickEditReservation(this.items.length -1);
@@ -446,19 +513,7 @@ export default {
       this.activeIndex = index;
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
       this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, true);
-      return;
-    },
-
-    onClickEditReservation: function(index){
-      this.activeIndex = index;
-      return;
-    },
-
-    onClickEditReservationForm: function(index){
-      this.activeIndex = index;
-      this.showMakeReservationForm.splice(this.activeIndex, 1, true);
-      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
-      this.disableAcceptAndTurnDownButton = false;
+      this.showReservationForm.splice(this.activeIndex, 1, false);
       return;
     },
 
@@ -545,10 +600,11 @@ export default {
       return;
     },
 
-    onClickCancelEditReservation: function(event){
+    onClickCancel: function(event){
       this.disableAcceptAndTurnDownButton = true;
       if(this.items[this.activeIndex].id){
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+        this.showReservationForm.splice(this.activeIndex, 1, false);
       }else{
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
         this.activeIndex = this.items.length - 1;

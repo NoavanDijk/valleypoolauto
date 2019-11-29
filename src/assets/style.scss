@@ -135,12 +135,16 @@ a, a:hover{
   margin: 1em 0; 
 }
 
+td{
+  cursor: pointer;
+}
+
 // General stuff for the forms
 .formmakereservation{
   margin-top: 1em;
 }
 
-.makereservationform{
+.makereservationform, .showreservationform{
   width: 90%;
   display: flex;
   flex-direction: column;
@@ -368,7 +372,7 @@ table{
     justify-content: center;
   }
 
-  .headerdate, .sortbutton, .undosortbutton, .addreservationbutton, .makereservationform, .makereservationwithdelete{
+  .headerdate, .sortbutton, .undosortbutton, .addreservationbutton, .makereservationform, .makereservationwithdelete, .showreservationform{
     width: 100%;
   }
 
