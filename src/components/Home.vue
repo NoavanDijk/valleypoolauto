@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-<!-- Datepicker to sort the reservations and the Reserve here button -->
+<!-- Datepicker to sort the reservations and the "Reserve here" button -->
     <div class="content">
       <div class="headerdatebutton">
         <div class="sortbydate">
@@ -120,6 +120,7 @@
         </div>
       </div>
 
+<!-- Show reservation form -->
       <div class="formmakereservation" v-if="items[activeIndex]" v-show="showReservationForm[activeIndex]">
         <div class="tile is-ancestor">
           <div class="tile is-parent tilereservationform">
@@ -243,10 +244,10 @@
       </div>
     </div>
 
+<!-- "Accept" and  "Turn down" buttons -->
     <button class="button is-primary" type="button" name="button" :disabled="disableAcceptAndTurnDownButton" v-on:click="onClickAcceptReservation">Accept</button>
     <button class="button is-secondary" type="button" name="button" :disabled="disableAcceptAndTurnDownButton" v-on:click="onClickTurnDownReservation">Turn down</button>
     
-
   </div>
 </template>
 
@@ -258,17 +259,6 @@ export default {
   data() {
     return {
       activeIndex: -1,
-
-      allReservations: true,
-      disableAcceptAndTurnDownButton: true,
-
-      showReservation: [],
-      sortDate: '',
-      noReservations: false,
-
-      showMakeReservationForm: [],
-      showReservationForm: [],
-      showAddKmAndZipcodesForm: [],
 
       // Editable Reserve Object
       startdate: '',
@@ -285,6 +275,20 @@ export default {
 
       items: [],
 
+      // Form arrays
+      allReservations: true,
+      showMakeReservationForm: [],
+      showReservationForm: [],
+      showAddKmAndZipcodesForm: [],
+
+      disableAcceptAndTurnDownButton: true,
+
+      // Sort data
+      showReservation: [],
+      sortDate: '',
+      noReservations: false,
+
+      // Modal
       activeModalId: '',
     }
   },
@@ -424,26 +428,22 @@ export default {
   },
 
   methods: {
-    openReservation: function(index){
-      this.activeIndex = index;
-      this.showReservationForm.splice(this.activeIndex, 1, true);
-      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
-      this.disableAcceptAndTurnDownButton = false;
-      return;
+    formatDateToString: function(date){
+      var d = new Date(date);
+      var retVal;
+      if(d instanceof Date && !isNaN(d)){
+        var yyyy = d.getFullYear();
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var dd = String(d.getDate()).padStart(2, '0');
+        retVal = `${dd}-${mm}-${yyyy}`;
+      }else{
+        retVal = 'dd-mm-yyyy';
+      }
+      return retVal;
     },
 
-    onClickEditReservation: function(index){
-      this.activeIndex = index;
-      return;
-    },
-
-    onClickEditReservationForm: function(index){
-      this.activeIndex = index;
-      this.showMakeReservationForm.splice(this.activeIndex, 1, true);
-      this.showReservationForm.splice(this.activeIndex, 1, false);
-      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
-      this.disableAcceptAndTurnDownButton = false;
+    onClickCloseModal: function(event){
+      this.activeModalId = "";
       return;
     },
 
@@ -471,20 +471,6 @@ export default {
       }
     },
 
-    formatDateToString: function(date){
-      var d = new Date(date);
-      var retVal;
-      if(d instanceof Date && !isNaN(d)){
-        var yyyy = d.getFullYear();
-        var mm = String(d.getMonth() + 1).padStart(2, '0');
-        var dd = String(d.getDate()).padStart(2, '0');
-        retVal = `${dd}-${mm}-${yyyy}`;
-      }else{
-        retVal = 'dd-mm-yyyy';
-      }
-      return retVal;
-    },
-
     onClickMakeReservationButton: function(event){
       this.items.push ({
         startTime: "",
@@ -509,11 +495,17 @@ export default {
       return;
     },
 
-    onClickFillInInformationForm: function(index){
+    openReservation: function(index){
       this.activeIndex = index;
+      this.showReservationForm.splice(this.activeIndex, 1, true);
       this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, true);
-      this.showReservationForm.splice(this.activeIndex, 1, false);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = false;
+      return;
+    },
+
+    onClickEditReservation: function(index){
+      this.activeIndex = index;
       return;
     },
 
@@ -522,30 +514,12 @@ export default {
       return;
     },
 
-    onClickAcceptReservation: function(event){
-      const el = this.items[this.activeIndex];
-      el.status = 'Approved';
-      
-      const data = {_id: this.items[this.activeIndex].id, item: this.items[this.activeIndex]};
-        const itemIndex = this.activeIndex;
-        axios.put('/baas/poolcar/reservation', {        
-          filter: JSON.stringify({ "_id" : this.items[this.activeIndex].id }),
-          json: JSON.stringify(data)
-        })
-        .then(response => {
-          console.log(response) 
-        })
-        .catch(function(error){
-          console.log(error)
-        });
-
-      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-      this.disableAcceptAndTurnDownButton = true;
-      return;
-    },
-
-    onClickCloseModal: function(event){
-      this.activeModalId = "";
+    onClickEditReservationForm: function(index){
+      this.activeIndex = index;
+      this.showMakeReservationForm.splice(this.activeIndex, 1, true);
+      this.showReservationForm.splice(this.activeIndex, 1, false);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = false;
       return;
     },
 
@@ -600,15 +574,11 @@ export default {
       return;
     },
 
-    onClickCancel: function(event){
-      this.disableAcceptAndTurnDownButton = true;
-      if(this.items[this.activeIndex].id){
-        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-        this.showReservationForm.splice(this.activeIndex, 1, false);
-      }else{
-        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
-        this.activeIndex = this.items.length - 1;
-      }
+    onClickFillInInformationForm: function(index){
+      this.activeIndex = index;
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, true);
+      this.showReservationForm.splice(this.activeIndex, 1, false);
       return;
     },
 
@@ -639,6 +609,18 @@ export default {
       return;
     },
 
+    onClickCancel: function(event){
+      this.disableAcceptAndTurnDownButton = true;
+      if(this.items[this.activeIndex].id){
+        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+        this.showReservationForm.splice(this.activeIndex, 1, false);
+      }else{
+        this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+        this.activeIndex = this.items.length - 1;
+      }
+      return;
+    },
+
     onClickOpenDeleteWarning: function(event){
       this.activeModalId = "modal-delete";
       return;
@@ -657,6 +639,28 @@ export default {
         this.items.splice(this.activeIndex, 1);
         this.activeModalId = "";
       }
+      return;
+    },    
+
+    onClickAcceptReservation: function(event){
+      const el = this.items[this.activeIndex];
+      el.status = 'Approved';
+      
+      const data = {_id: this.items[this.activeIndex].id, item: this.items[this.activeIndex]};
+        const itemIndex = this.activeIndex;
+        axios.put('/baas/poolcar/reservation', {        
+          filter: JSON.stringify({ "_id" : this.items[this.activeIndex].id }),
+          json: JSON.stringify(data)
+        })
+        .then(response => {
+          console.log(response) 
+        })
+        .catch(function(error){
+          console.log(error)
+        });
+
+      this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+      this.disableAcceptAndTurnDownButton = true;
       return;
     },
 
