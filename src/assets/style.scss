@@ -1,6 +1,5 @@
 $primary: #ff0028;
 $font-family-primary: "Open Sans";
-$title-family: "Merriweather";
 $size-5: 1.1rem;
 
 @import "~bulma/bulma";
@@ -46,6 +45,10 @@ $size-5: 1.1rem;
 
 .input{
   margin-bottom: 0.5em;
+}
+
+.title2{
+  font-size: 1.3rem;
 }
 
 // Scroll
@@ -238,6 +241,19 @@ td{
 table{
   width: 100%;
   border-collapse: collapse;
+}
+
+// Information page
+.demo{
+  font-size: 2.5rem;
+  display: flex;
+  justify-content: center;
+  margin: 1em;
+}
+
+.analytics{
+  font-size: 1.5em;
+  margin: 0 0 1em 0;
 }
 
 @media

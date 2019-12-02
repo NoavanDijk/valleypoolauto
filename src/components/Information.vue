@@ -1,14 +1,35 @@
 <template>
   <div id="information">
-    <h1><b>Gemaakte kilometers per maand:</b></h1>
-
-    <div>
-      <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
-    </div>
-
-    <div>
-      <p><b>Totaal aantal kilometers:</b></p>
-      <p id="demo"></p>
+    <h1 class="analytics">Analytics overview</h1>
+    <div class="tile is-ancestor">
+      <div class="tile is-vertical is-8">
+        <div class="tile">
+          <div class="tile is-parent is-vertical">
+            <article class="tile is-child notification">
+              <p class="title2">Totaal aantal gemaakte kilometers</p>
+              <p class="demo" id="demo"></p>
+            </article>
+            <article class="tile is-child notification">
+              <p class="title2">Gemaakte ritten per maand</p>
+              <div>
+                <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
+              </div>
+            </article>
+          </div>
+          <div class="tile is-parent is-vertical">
+            <article class="tile is-child notification">
+              <p class="title2">Gemaakte kilometers per maand</p>
+              <div>
+                <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
+              </div>
+            </article>
+            <article class="tile is-child notification">
+              <p class="title2">Totaal aantal gebruikers</p>
+              <p class="demo">8</p>
+            </article>
+          </div>
+        </div>
+      </div>
     </div>
   </div>  
 </template>
@@ -18,7 +39,7 @@
     name: 'Information',
     data: function() {
       return {
-        windowWidth: 670,
+        windowWidth: 640,
 
         options: {
           chart: {
