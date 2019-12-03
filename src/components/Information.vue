@@ -1,36 +1,54 @@
 <template>
   <div id="information">
     <h1 class="analytics">Analytics overview</h1>
+    <!-- Totale aantal ritten -->
+    <!-- Hoeveel in Progress -->
     <div class="tile is-ancestor">
-      <div class="tile is-vertical is-8">
-        <div class="tile">
-          <div class="tile is-parent is-vertical">
-            <article class="tile is-child notification">
-              <p class="title2">Totaal aantal gemaakte kilometers</p>
-              <p class="demo" id="demo"></p>
-            </article>
-            <article class="tile is-child notification">
-              <p class="title2">Gemaakte ritten per maand</p>
-              <div>
-                <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
-              </div>
-            </article>
-          </div>
-          <div class="tile is-parent is-vertical">
-            <article class="tile is-child notification">
-              <p class="title2">Gemaakte kilometers per maand</p>
-              <div>
-                <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
-              </div>
-            </article>
-            <article class="tile is-child notification">
-              <p class="title2">Totaal aantal gebruikers</p>
-              <p class="demo">8</p>
-            </article>
-          </div>
-        </div>
+      <div class="tile is-parent">
+      <article class="tile is-child box">
+        <p class="title2">Totaal aantal gemaakte kilometers</p>
+        <p class="demo" id="demo"></p>
+      </article>
+    </div>
+      <div class="tile is-parent">
+        <article class="tile is-child box">
+          <p class="title2">Totaal aantal gemaakte ritten</p>
+          <p class="demo" id="demo"></p>
+        </article>
+      </div>
+      <div class="tile is-parent">
+        <article class="tile is-child box">
+          <p class="title2">Gemaakte kilometers per maand</p>
+            <div>
+              <apexchart :width=windowWidth type="bar" :options="options" :series="series"></apexchart>
+            </div>
+        </article>
       </div>
     </div>
+
+    <div class="tile is-ancestor">
+      <div class="tile is-parent">
+        <article class="tile is-child box">
+          <p class="title2">Gemaakte ritten per maand</p>
+          <div>
+            <apexchart :width=windowWidth type="bar" :options="options" :series="series2"></apexchart>
+          </div>
+        </article>
+      </div>
+      <div class="tile is-parent">
+        <article class="tile is-child box">
+          <p class="title2">Totaal aantal gebruikers</p>
+          <p class="demo">8</p>
+        </article>
+      </div>
+      <div class="tile is-parent">
+        <article class="tile is-child box">
+          <p class="title2">Aantal in "In progress"</p>
+          <p class="demo">8</p>
+        </article>
+      </div>
+    </div>
+          
   </div>  
 </template>
 
@@ -39,7 +57,7 @@
     name: 'Information',
     data: function() {
       return {
-        windowWidth: 640,
+        windowWidth: 625,
 
         options: {
           chart: {
@@ -62,6 +80,11 @@
           name: 'Aantal kilometers',
           data: [0,0,0,0,0,0,0,0,0,0,0,0]
         }],
+
+        series2: [{
+          name: 'Aantal ritten',
+          data: [0,0,0,0,0,0,0,0,0,0,0,0]
+        }],
       }
     },
 
@@ -71,23 +94,33 @@
       axios.get('/baas/poolcar/reservations', {headers: config})
       .then(response => {
         const totalkilometersarray = [0,0,0,0,0,0,0,0,0,0,0,0];
+        const totaldrivesarray = [0,0,0,0,0,0,0,0,0,0,0,0];
         for(var i = 0; i < response.data.length; i += 1){
           const d = response.data[i];
           const totalkmForItem = d.item.kmend - d.item.kmstart;
           const monthIndex = new Date(d.item.enddate).getMonth();
 
           let totalkmForMonth = totalkilometersarray[monthIndex];
+          let totaldrivesForMonth = totaldrivesarray[monthIndex];
+          
+          totaldrivesForMonth += 1;          
           totalkmForMonth += totalkmForItem;
+          
           totalkilometersarray[monthIndex] = totalkmForMonth;
+          totaldrivesarray[monthIndex] = totaldrivesForMonth;
         }
          
-        function getSum(total, num) {
+        function getSum(total, num){
           const allkilometers = total + num;
           return allkilometers;
         }
 
         this.series  = [{
           data: totalkilometersarray
+        }],
+
+        this.series2 = [{
+          data: totaldrivesarray
         }]
 
         document.getElementById("demo").innerHTML = totalkilometersarray.reduce(getSum, 0);
@@ -111,7 +144,7 @@
 
       beforeDestroy() {
         window.removeEventListener('resize', this.getWindowWidth);
-      }
+      },
     }
   }
 </script>

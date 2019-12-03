@@ -47,10 +47,6 @@ $size-5: 1.1rem;
   margin-bottom: 0.5em;
 }
 
-.title2{
-  font-size: 1.3rem;
-}
-
 // Scroll
 html{
   scroll-behavior: smooth;
@@ -253,7 +249,11 @@ table{
 
 .analytics{
   font-size: 1.5em;
-  margin: 0 0 1em 0;
+  margin: 0 0 0.5em 0;
+}
+
+.title2{
+  font-size: 1.2rem;
 }
 
 @media
