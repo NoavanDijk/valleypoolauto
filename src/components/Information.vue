@@ -1,8 +1,6 @@
 <template>
   <div id="information">
     <h1 class="analytics">Analytics overview</h1>
-    <!-- Totale aantal ritten -->
-    <!-- Hoeveel in Progress -->
     <div class="tile is-ancestor">
       <div class="tile is-parent">
       <article class="tile is-child box">
@@ -13,7 +11,7 @@
       <div class="tile is-parent">
         <article class="tile is-child box">
           <p class="title2">Totaal aantal gemaakte ritten</p>
-          <p class="demo" id="demo"></p>
+          <p class="demo" id="demo2"></p>
         </article>
       </div>
       <div class="tile is-parent">
@@ -44,7 +42,7 @@
       <div class="tile is-parent">
         <article class="tile is-child box">
           <p class="title2">Aantal in "In progress"</p>
-          <p class="demo">8</p>
+          <p class="demo" id="demo3"></p>
         </article>
       </div>
     </div>
@@ -57,7 +55,7 @@
     name: 'Information',
     data: function() {
       return {
-        windowWidth: 625,
+        windowWidth: 626,
 
         options: {
           chart: {
@@ -95,19 +93,27 @@
       .then(response => {
         const totalkilometersarray = [0,0,0,0,0,0,0,0,0,0,0,0];
         const totaldrivesarray = [0,0,0,0,0,0,0,0,0,0,0,0];
+        const totalinprogress = [0,0,0,0,0,0,0,0,0,0,0,0];
         for(var i = 0; i < response.data.length; i += 1){
           const d = response.data[i];
           const totalkmForItem = d.item.kmend - d.item.kmstart;
           const monthIndex = new Date(d.item.enddate).getMonth();
+          
+          if(d.item.status == "In progress"){
+            let countinprogress = totalinprogress[monthIndex];
+            countinprogress += 1;
+            totalinprogress[monthIndex] = countinprogress;
+          }
 
           let totalkmForMonth = totalkilometersarray[monthIndex];
           let totaldrivesForMonth = totaldrivesarray[monthIndex];
-          
-          totaldrivesForMonth += 1;          
+         
+          totaldrivesForMonth += 1;
           totalkmForMonth += totalkmForItem;
           
           totalkilometersarray[monthIndex] = totalkmForMonth;
           totaldrivesarray[monthIndex] = totaldrivesForMonth;
+         
         }
          
         function getSum(total, num){
@@ -124,6 +130,8 @@
         }]
 
         document.getElementById("demo").innerHTML = totalkilometersarray.reduce(getSum, 0);
+        document.getElementById("demo2").innerHTML = totaldrivesarray.reduce(getSum, 0);
+        document.getElementById("demo3").innerHTML = totalinprogress.reduce(getSum, 0);
         console.log(response);
       })
       .catch(error => {
