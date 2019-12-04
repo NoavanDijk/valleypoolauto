@@ -200,6 +200,7 @@
                 </div>
               </form>
               <div class="reservatebutton">
+                <button class="button is-text" v-on:click="onClickCancel">Cancel</button> 
                 <button class="button is-primary" type="button" name="button" :disabled="saveButtonIsDisabled" v-on:click="onClickSaveButton">Save</button>
               </div>
             </div>
@@ -614,8 +615,10 @@ export default {
       if(this.items[this.activeIndex].id){
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
         this.showReservationForm.splice(this.activeIndex, 1, false);
+        this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
       }else{
         this.showMakeReservationForm.splice(this.activeIndex, 1, false);
+        this.showAddKmAndZipcodesForm.splice(this.activeIndex, 1, false);
         this.activeIndex = this.items.length - 1;
       }
       return;

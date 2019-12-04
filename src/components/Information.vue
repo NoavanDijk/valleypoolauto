@@ -41,7 +41,7 @@
       </div>
       <div class="tile is-parent">
         <article class="tile is-child box">
-          <p class="title2">Aantal in "In progress"</p>
+          <p class="title2">Aantal reserveringen "In progress"</p>
           <p class="demo" id="demo3"></p>
         </article>
       </div>
@@ -113,12 +113,10 @@
           
           totalkilometersarray[monthIndex] = totalkmForMonth;
           totaldrivesarray[monthIndex] = totaldrivesForMonth;
-         
         }
          
         function getSum(total, num){
-          const allkilometers = total + num;
-          return allkilometers;
+          return total + num;
         }
 
         this.series  = [{
